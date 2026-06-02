@@ -408,6 +408,7 @@ body.nav-right.nav-pill .nav-item.active{
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="app-header">
   <div class="logo-area">
     <span class="logo-icon">🌿</span>
@@ -423,46 +424,59 @@ body.nav-right.nav-pill .nav-item.active{
   </div>
 </div>
 
+<!-- PAGES -->
 <div class="app-body">
 <div class="page-area">
 
+  <!-- DASHBOARD -->
   <div class="page active" id="page-dashboard">
     <div class="page-scroll" id="dashContent"></div>
   </div>
 
+  <!-- PURCHASES -->
   <div class="page" id="page-purchases">
     <div class="page-scroll" id="purchasesContent"></div>
   </div>
 
+  <!-- SALES -->
   <div class="page" id="page-sales">
     <div class="page-scroll" id="salesContent"></div>
   </div>
 
+  <!-- PAYMENTS -->
   <div class="page" id="page-payments">
     <div class="page-scroll" id="paymentsContent"></div>
   </div>
 
+  <!-- EXPENSES -->
   <div class="page" id="page-expenses">
     <div class="page-scroll" id="expensesContent"></div>
   </div>
 
+  <!-- FARMERS -->
   <div class="page" id="page-farmers">
     <div class="page-scroll" id="farmersContent"></div>
   </div>
 
+  <!-- TRADERS -->
   <div class="page" id="page-traders">
     <div class="page-scroll" id="tradersContent"></div>
   </div>
 
+  <!-- REPORTS -->
   <div class="page" id="page-reports">
     <div class="page-scroll" id="reportsContent"></div>
   </div>
 
+  <!-- SETTINGS -->
   <div class="page" id="page-settings">
     <div class="page-scroll" id="settingsContent"></div>
   </div>
 
-</div><div class="bottom-nav">
+</div><!-- /page-area -->
+
+<!-- BOTTOM NAV — inside app-body so flex-direction row/column works for all positions -->
+<div class="bottom-nav">
   <div class="nav-item active" onclick="goTab('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span><span class="nav-label">Home</span></div>
   <div class="nav-item" onclick="goTab('purchases')" id="nav-purchases"><span class="nav-icon">🧅</span><span class="nav-label">Buy</span></div>
   <div class="nav-item" onclick="goTab('sales')" id="nav-sales"><span class="nav-icon">🏪</span><span class="nav-label">Sell</span></div>
@@ -474,15 +488,20 @@ body.nav-right.nav-pill .nav-item.active{
   <div class="nav-item" onclick="goTab('settings')" id="nav-settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
 </div>
 
-</div><div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+</div><!-- /app-body -->
+
+<!-- MODAL CONTAINER -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modalBox"></div>
 </div>
 
+<!-- PWA UPDATE BAR -->
 <div class="pwa-update-bar" id="pwaUpdateBar">
   <span>🔄 Update available!</span>
   <button onclick="applyPWAUpdate()" style="background:#fff;color:var(--cotton);border:none;padding:4px 10px;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px">Refresh</button>
 </div>
 
+<!-- PWA INSTALL PROMPT -->
 <div class="pwa-install-bar" id="pwaInstallBar">
   <div>
     <div style="font-weight:700;font-size:13px;color:var(--white)">📲 Install App</div>
@@ -494,8 +513,10 @@ body.nav-right.nav-pill .nav-item.active{
   </div>
 </div>
 
+<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<!-- FIREBASE SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, set, get, onValue, off, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
@@ -1425,9 +1446,6 @@ function saveExpense(id) {
   saveData('expenses'); closeModal(); renderExpenses(); toast(id?'Expense updated ✓':'Expense saved ✓');
 }
 
-// ═══════════════════════════════════════════════
-//  FARMERS
-// ═══════════════════════════════════════════════
 function delExpense(id) {
   confirmDialog('Delete this expense? This cannot be undone.', () => {
     data.expenses = (data.expenses||[]).filter(x=>x.id!==id);
@@ -1715,7 +1733,7 @@ function renderReports() {
     ${tDues.length ? tDues.map(t=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center">
       <div><div style="font-weight:700;color:var(--white)">${esc(t.name)}</div><div class="txn-meta">${esc(t.city)}</div></div>
       <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${C.purple}">${fmt(t.due)}</div>
-    </div>`).join('') : `<div style="color:${C.profit};font-size:13px;margin-bottom:12px">✓ All traders cleared</div>}`;
+    </div>`).join('') : `<div style="color:${C.profit};font-size:13px;margin-bottom:12px">✓ All traders cleared</div>`}`;
 
   document.getElementById('reportsContent').innerHTML = `
     <div class="page-hdr">
@@ -1789,6 +1807,7 @@ function openFirebaseSetup() {
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
 
+    <!-- SYNC STATUS BANNER -->
     <div style="background:${connected?'var(--profit)':'var(--amber)'}18;border:1px solid ${connected?'var(--profit)':'var(--amber)'}40;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
       <span style="font-size:20px">${connected?'☁':'💾'}</span>
       <div>
@@ -1797,11 +1816,13 @@ function openFirebaseSetup() {
       </div>
     </div>
 
+    <!-- SECTION TABS -->
     <div style="display:flex;gap:6px;margin-bottom:16px">
       <button class="btn btn-sm ${!cfg?'btn-onion':'btn-ghost'}" onclick="showSyncTab('firebase')" id="tabFb">🔥 Firebase Sync</button>
       <button class="btn btn-sm btn-ghost" onclick="showSyncTab('backup')" id="tabBk">💾 Backup / Restore</button>
     </div>
 
+    <!-- FIREBASE TAB -->
     <div id="syncTabFirebase">
       ${cfg && connected ? `
         <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px">
@@ -1844,7 +1865,7 @@ function openFirebaseSetup() {
             <input type="text" id="fbApiKey" value="${cfg?cfg.apiKey:''}" placeholder="AIzaSy...">
           </div>
           <div class="field">
-            <label>Database URL * <span style="font-size:9px;color:var(--faint)">(e.g., .firebaseio.com or .firebasedatabase.app)</span></label>
+            <label>Database URL * <span style="font-size:9px;color:var(--faint)">(ends in .firebaseio.com)</span></label>
             <input type="text" id="fbDbUrl" value="${cfg?cfg.databaseURL:''}" placeholder="https://your-project-default-rtdb.firebaseio.com">
           </div>
           <div class="field">
@@ -1870,6 +1891,7 @@ function openFirebaseSetup() {
       `}
     </div>
 
+    <!-- BACKUP TAB -->
     <div id="syncTabBackup" style="display:none">
       <p style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.7">
         Export your data as a JSON file to back it up or transfer it to another device — even without Firebase.
@@ -1927,16 +1949,8 @@ async function connectFirebase() {
   if (!apiKey)       return toast('API Key is required', true);
   if (!databaseURL)  return toast('Database URL is required', true);
   if (!projectId)    return toast('Project ID is required', true);
-  
-  // Clean up trailing slash if present
-  const cleanedDbUrl = databaseURL.replace(/\/$/, "");
-
-  // Accept both default (.firebaseio.com) and regional (.firebasedatabase.app) URL formats
-  if (!cleanedDbUrl.includes('firebaseio.com') && !cleanedDbUrl.includes('firebasedatabase.app')) {
-    return toast('Invalid Database URL format', true);
-  }
-  
-  const config = { apiKey, authDomain, databaseURL: cleanedDbUrl, projectId };
+  if (!databaseURL.includes('firebaseio.com')) return toast('Database URL must end in .firebaseio.com', true);
+  const config = { apiKey, authDomain, databaseURL, projectId };
   toast('Connecting to Firebase...');
   const ok = await initFirebase(config);
   if (ok) { closeModal(); toast('☁ Connected! Pulling latest data...'); }
@@ -2164,11 +2178,13 @@ function renderSettings() {
     <div class="page-title" style="margin-bottom:4px">⚙️ Settings</div>
     <div style="font-size:11px;color:var(--dim);margin-bottom:16px">Customize layout, theme &amp; appearance</div>
 
+    <!-- THEME -->
     <div class="settings-section">
       <div class="settings-section-title">🎨 Theme</div>
       <div class="theme-grid">${themeSwatches}</div>
     </div>
 
+    <!-- ACCENT COLORS -->
     <div class="settings-section">
       <div class="settings-section-title">🖌 Accent Colors</div>
       <div class="color-picker-row">
@@ -2183,6 +2199,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- TYPOGRAPHY & FONT SIZE -->
     <div class="settings-section">
       <div class="settings-section-title">🔤 Typography</div>
       <div class="option-row" style="margin-bottom:12px">
@@ -2203,6 +2220,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- NAVIGATION -->
     <div class="settings-section">
       <div class="settings-section-title">🧭 Navigation</div>
 
@@ -2239,6 +2257,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- LAYOUT DENSITY -->
     <div class="settings-section">
       <div class="settings-section-title">📐 Layout Density</div>
       <div class="option-row">
@@ -2248,6 +2267,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- BORDER RADIUS -->
     <div class="settings-section">
       <div class="settings-section-title">⬛ Corner Style</div>
       <div class="option-row">
@@ -2258,6 +2278,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- CARDS & EFFECTS -->
     <div class="settings-section">
       <div class="settings-section-title">✨ Card Effects</div>
       <div class="option-row">
@@ -2266,6 +2287,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- BRANDING -->
     <div class="settings-section">
       <div class="settings-section-title">🏷 App Branding</div>
       <div class="brand-preview">
@@ -2281,6 +2303,7 @@ function renderSettings() {
       <button class="btn btn-onion btn-sm" onclick="saveBranding()">Apply Branding</button>
     </div>
 
+    <!-- RESET -->
     <div class="reset-section">
       <div class="settings-section-title">⚠️ Reset</div>
       <button class="btn btn-danger btn-sm" onclick="resetCustomization()">Reset All Customizations</button>
@@ -2290,6 +2313,7 @@ function renderSettings() {
       </div>
     </div>
 
+    <!-- BACKUP -->
     <div class="settings-section" style="margin-top:16px">
       <div class="settings-section-title">💾 Data Backup</div>
       <div style="font-size:11px;color:var(--dim);margin-bottom:10px">Export your data as a JSON file. Restore it later or transfer to another device.</div>
