@@ -558,6 +558,7 @@ let fbApp = null, fbDb = null, fbRef = null;
 let fbConfig = null;
 let syncTimeout = null;
 let isListeningFirebase = false;
+let localFileHandle = null;
 
 // ═══════════════════════════════════════════════
 //  HELPERS
@@ -772,6 +773,9 @@ window.addEventListener('offline', () => setSyncStatus('offline'));
 
 function saveData() {
   saveLocal();
+  if (localFileHandle) {
+    writeToPhysicalFile();
+  }
   if (fbRef) {
     clearTimeout(syncTimeout);
     syncTimeout = setTimeout(pushToFirebase, 800);
@@ -2168,7 +2172,8 @@ function renderSettings() {
       <div class="settings-section-title">💾 Data Backup</div>
       <div style="font-size:11px;color:var(--dim);margin-bottom:10px">Export your data as a JSON file. Restore it later or transfer to another device.</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="exportJSON()">⬇ Export Backup</button>
+        <button class="btn btn-onion btn-sm" onclick="selectLocalBackupFile()">🔒 Link Hard Drive File (Auto-Save)</button>
+	<button class="btn btn-ghost btn-sm" onclick="exportJSON()">⬇ Export Backup</button>
         <button class="btn btn-ghost btn-sm" onclick="openFirebaseSetup();setTimeout(()=>showSyncTab('backup'),100)">⬆ Restore Backup</button>
         <button class="btn btn-ghost btn-sm" onclick="openFirebaseSetup()">☁ Firebase Sync</button>
       </div>
@@ -2246,6 +2251,43 @@ function scheduleBackupToast() {
 // ═══════════════════════════════════════════════
 //  SAFE DATA HELPERS
 // ═══════════════════════════════════════════════
+async function selectLocalBackupFile() {
+  try {
+    const options = {
+      suggestedName: `AGFarmedge_Live_Ledger.json`,
+      types: [{
+        description: 'JSON Backup File',
+        accept: { 'application/json': ['.json'] },
+      }],
+    };
+    localFileHandle = await window.showSaveFilePicker(options);
+    toast('Physical file linked successfully! App will now auto-save here ✓');
+    await writeToPhysicalFile();
+  } catch (err) {
+    if (err.name !== 'AbortError') {
+      toast('File access denied: ' + err.message, true);
+    }
+  }
+}
+
+async function writeToPhysicalFile() {
+  if (!localFileHandle) return;
+  try {
+    const options = { mode: 'readwrite' };
+    if ((await localFileHandle.queryPermission(options)) !== 'granted') {
+      if ((await localFileHandle.requestPermission(options)) !== 'granted') {
+        return;
+      }
+    }
+    const writable = await localFileHandle.createWritable();
+    const payload = JSON.stringify({ _version: 5, _lastUpdated: new Date().toISOString(), ...ensureArrays(data) }, null, 2);
+    await writable.write(payload);
+    await writable.close();
+    console.log('[Farmedge] Hard drive sync completed successfully.');
+  } catch (err) {
+    console.error('Failed to write auto-save file:', err);
+  }
+}
 function ensureArrays(d) {
   d.farmers   = Array.isArray(d.farmers)   ? d.farmers   : [];
   d.traders   = Array.isArray(d.traders)   ? d.traders   : [];
