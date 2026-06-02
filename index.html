@@ -3,14 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Farmedge">
-<meta name="theme-color" content="#07071a">
-<title>AG Farmedge Global</title>
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
+<title>AG Farmedge Global v6</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style id="cardShadowStyle"></style>
 <style id="animStyle">.no-animations *{animation:none!important;transition:none!important}</style>
@@ -398,12 +391,6 @@ body.nav-right.nav-pill .nav-item.active{
 @media(max-width:400px){
   .field-row.col3{grid-template-columns:1fr 1fr}
 }
-
-/* PWA UPDATE BANNER */
-.pwa-update-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--cotton);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;transform:translateY(-100%);transition:transform .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.3)}
-.pwa-update-bar.show{transform:translateY(0)}
-.pwa-install-bar{position:fixed;bottom:70px;left:12px;right:12px;z-index:9000;background:var(--card);border:1.5px solid var(--onion);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100px);opacity:0;transition:all .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.4)}
-.pwa-install-bar.show{transform:translateY(0);opacity:1}
 </style>
 </head>
 <body>
@@ -495,33 +482,15 @@ body.nav-right.nav-pill .nav-item.active{
   <div class="modal" id="modalBox"></div>
 </div>
 
-<!-- PWA UPDATE BAR -->
-<div class="pwa-update-bar" id="pwaUpdateBar">
-  <span>🔄 Update available!</span>
-  <button onclick="applyPWAUpdate()" style="background:#fff;color:var(--cotton);border:none;padding:4px 10px;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px">Refresh</button>
-</div>
-
-<!-- PWA INSTALL PROMPT -->
-<div class="pwa-install-bar" id="pwaInstallBar">
-  <div>
-    <div style="font-weight:700;font-size:13px;color:var(--white)">📲 Install App</div>
-    <div style="font-size:11px;color:var(--dim);margin-top:2px">Add to homescreen for desktop-like experience</div>
-  </div>
-  <div style="display:flex;gap:8px">
-    <button onclick="triggerInstall()" style="background:var(--onion);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Install</button>
-    <button onclick="dismissInstall()" style="background:transparent;border:1px solid var(--borderL);color:var(--dim);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px">✕</button>
-  </div>
-</div>
-
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <!-- FIREBASE SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get, onValue, off, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getDatabase, ref, set, onValue, off } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
 
-window._firebase = { initializeApp, getDatabase, ref, set, get, onValue, off, remove };
+window._firebase = { initializeApp, getDatabase, ref, set, onValue, off };
 window._firebaseReady = true;
 window.dispatchEvent(new Event('firebaseReady'));
 </script>
@@ -671,107 +640,9 @@ function migrateData(d) {
 }
 
 // ═══════════════════════════════════════════════
-//  INDEXEDDB — PRIMARY STORAGE (crash-safe, 50MB+)
-//  localStorage used as fast sync cache only
+//  LOCAL STORAGE
 // ═══════════════════════════════════════════════
-const IDB_NAME = 'agfarmedge_db';
-const IDB_VERSION = 1;
-const IDB_STORE = 'appdata';
-let _idb = null;
-
-function openIDB() {
-  return new Promise((resolve, reject) => {
-    if (_idb) return resolve(_idb);
-    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
-    req.onupgradeneeded = e => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains(IDB_STORE)) {
-        db.createObjectStore(IDB_STORE);
-      }
-    };
-    req.onsuccess = e => { _idb = e.target.result; resolve(_idb); };
-    req.onerror = () => reject(req.error);
-  });
-}
-
-async function idbGet(key) {
-  try {
-    const db = await openIDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(IDB_STORE, 'readonly');
-      const req = tx.objectStore(IDB_STORE).get(key);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  } catch(e) { return null; }
-}
-
-async function idbSet(key, value) {
-  try {
-    const db = await openIDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(IDB_STORE, 'readwrite');
-      const req = tx.objectStore(IDB_STORE).put(value, key);
-      req.onsuccess = () => resolve(true);
-      req.onerror = () => reject(req.error);
-    });
-  } catch(e) { return false; }
-}
-
-// Write-ahead journal: mark intent before save, clear after success
-async function writePending(payload) {
-  await idbSet('_pending', {ts: Date.now(), data: payload});
-}
-async function clearPending() {
-  await idbSet('_pending', null);
-}
-async function recoverPending() {
-  const p = await idbGet('_pending');
-  if (p && p.data) {
-    console.log('[Farmedge] Recovering unsaved data from crash journal...');
-    data = ensureArrays(migrateData(p.data));
-    await saveLocal();
-    await clearPending();
-    toast('Recovered unsaved data after crash ✓');
-  }
-}
-
-async function saveLocal() {
-  const payload = ensureArrays(data);
-  // Write-ahead: record intent before committing
-  await writePending(payload);
-  try {
-    // PRIMARY: IndexedDB
-    await idbSet(SK, payload);
-    // MIRROR: localStorage (fast read on next startup)
-    try { localStorage.setItem(SK, JSON.stringify(payload)); } catch(e) {}
-    await clearPending();
-  } catch(e) {
-    // IndexedDB failed — try localStorage only
-    try {
-      localStorage.setItem(SK, JSON.stringify(payload));
-      await clearPending();
-    } catch(le) {
-      if (le.name === 'QuotaExceededError') {
-        toast('⚠ Storage full! Please export a backup now.', true);
-        setTimeout(() => {
-          confirmDialog(
-            'Your device storage is almost full. Your last change may not have saved. Export a backup now to protect your data.',
-            exportJSON, 'Export Backup', 'var(--amber)'
-          );
-        }, 400);
-      }
-    }
-  }
-}
-
-async function loadLocal() {
-  // 1. Try IndexedDB first (most reliable)
-  try {
-    const idbData = await idbGet(SK);
-    if (idbData && typeof idbData === 'object') return idbData;
-  } catch(e) {}
-  // 2. Fallback to localStorage
+function loadLocal() {
   try {
     const raw = localStorage.getItem(SK);
     if (raw) return JSON.parse(raw);
@@ -779,8 +650,27 @@ async function loadLocal() {
   return null;
 }
 
+function saveLocal() {
+  try {
+    localStorage.setItem(SK, JSON.stringify(ensureArrays(data)));
+  } catch(e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22 || e.code === 1014) {
+      // Storage full — prompt user to export immediately
+      toast('⚠ Storage full! Please export a backup now.', true);
+      setTimeout(() => {
+        confirmDialog(
+          'Your device storage is almost full. Your last change may not have saved. Export a backup now to protect your data.',
+          exportJSON,
+          'Export Backup',
+          'var(--amber)'
+        );
+      }, 400);
+    }
+  }
+}
+
 // ═══════════════════════════════════════════════
-//  FIREBASE — PER-RECORD WRITES (conflict-safe)
+//  FIREBASE
 // ═══════════════════════════════════════════════
 function loadFirebaseConfig() {
   try {
@@ -800,6 +690,7 @@ function setSyncStatus(status) {
   else lbl.textContent = 'Local only';
 }
 
+// Use a counter (not boolean) to safely handle overlapping pushes
 let _suppressCount = 0;
 
 async function initFirebase(config) {
@@ -808,6 +699,7 @@ async function initFirebase(config) {
   }
   const { initializeApp, getDatabase, ref, set, onValue, off } = window._firebase;
   try {
+    // Cleanly detach old listener and let the old app fall out of scope
     if (fbRef) { try { off(fbRef); } catch(e) {} }
     fbApp = initializeApp(config, 'agfarmedge-' + Date.now());
     fbDb = getDatabase(fbApp);
@@ -817,19 +709,19 @@ async function initFirebase(config) {
     isListeningFirebase = true;
     setSyncStatus('syncing');
 
+    // ── CRITICAL: Firebase is always the source of truth on reconnect.
+    // Only seed Firebase if the DB is brand-new (null).
     onValue(fbRef, (snapshot) => {
       if (_suppressCount > 0) return;
       const val = snapshot.val();
       if (val && typeof val === 'object') {
-        // Merge per-collection: Firebase wins on conflict
-        const merged = ensureArrays(migrateData(val));
-        data = merged;
+        data = ensureArrays(migrateData(val));
         saveLocal();
         renderCurrentTab();
         setSyncStatus('synced');
       } else if (val === null) {
-        // Empty DB — first device: push all local data
-        pushAllToFirebase();
+        // Empty DB — first device ever: push local data up
+        pushToFirebase();
       }
     }, (err) => {
       setSyncStatus('offline');
@@ -843,13 +735,12 @@ async function initFirebase(config) {
   }
 }
 
-// ── PUSH ALL (first connect / full restore) ────────────────────
-function pushAllToFirebase() {
+function pushToFirebase() {
   if (!fbRef || !window._firebaseReady) return;
   const { set } = window._firebase;
   setSyncStatus('syncing');
   _suppressCount++;
-  set(fbRef, ensureArrays(data))
+  set(fbRef, data)
     .then(() => { setSyncStatus('synced'); _suppressCount = Math.max(0, _suppressCount - 1); })
     .catch(e => {
       setSyncStatus('offline');
@@ -858,76 +749,32 @@ function pushAllToFirebase() {
     });
 }
 
-// ── PER-RECORD WRITE (conflict-safe, atomic) ───────────────────
-// Instead of writing the whole data blob, write only the changed collection.
-// Firebase path: agfarmedge/data/{collection}/{recordId}
-// Deleted records are written with _deleted:true tombstone (safe for multi-device)
-function pushCollectionToFirebase(collection) {
-  if (!fbDb || !window._firebaseReady) return;
-  const { ref, set } = window._firebase;
-  setSyncStatus('syncing');
-  _suppressCount++;
-
-  const records = (data[collection] || []);
-  const collRef = ref(fbDb, `agfarmedge/data/${collection}`);
-
-  // Build a flat object: { recordId: record, ... }
-  const payload = {};
-  records.forEach(r => {
-    payload[String(r.id)] = r;
-  });
-
-  set(collRef, payload)
-    .then(() => {
-      setSyncStatus('synced');
-      _suppressCount = Math.max(0, _suppressCount - 1);
-    })
-    .catch(e => {
-      setSyncStatus('offline');
-      _suppressCount = Math.max(0, _suppressCount - 1);
-      toast('Sync failed — saved locally', true);
-    });
-}
-
-// Called by all save/delete operations — only syncs the affected collection
-function pushToFirebase(collection) {
-  if (!fbRef || !window._firebaseReady) return;
-  if (collection) {
-    pushCollectionToFirebase(collection);
-  } else {
-    pushAllToFirebase();
-  }
-}
-
+// Flush any pending debounced sync immediately before the tab closes
 window.addEventListener('beforeunload', () => {
   if (syncTimeout) {
     clearTimeout(syncTimeout);
-    pushAllToFirebase();
+    pushToFirebase();
   }
 });
 
+// Auto-reconnect when the device comes back online
 window.addEventListener('online', () => {
   if (fbConfig && fbRef) {
     setSyncStatus('syncing');
-    pushAllToFirebase();
+    pushToFirebase();
     toast('Back online — syncing...');
   } else if (fbConfig && !fbRef) {
+    // Connection was lost fully — re-init
     initFirebase(fbConfig);
   }
 });
 window.addEventListener('offline', () => setSyncStatus('offline'));
 
-// ── saveData: accepts optional collection for targeted Firebase push ──
-function saveData(collection) {
+function saveData() {
   saveLocal();
   if (fbRef) {
     clearTimeout(syncTimeout);
-    if (collection) {
-      // Per-record: push only the changed collection after short debounce
-      syncTimeout = setTimeout(() => pushCollectionToFirebase(collection), 600);
-    } else {
-      syncTimeout = setTimeout(() => pushAllToFirebase(), 800);
-    }
+    syncTimeout = setTimeout(pushToFirebase, 800);
   }
 }
 
@@ -1146,13 +993,13 @@ function savePurchase(id) {
   data.purchases = ensureArrays(data).purchases;
   if (id) data.purchases = data.purchases.map(x=>x.id===id?{...rec,id}:x);
   else data.purchases.push({...rec, id:uid()});
-  saveData('purchases'); closeModal(); renderPurchases(); toast('Purchase saved \u2713');
+  saveData(); closeModal(); renderPurchases(); toast('Purchase saved \u2713');
 }
 
 function delPurchase(id) {
   confirmDialog('Delete this purchase? This cannot be undone.', () => {
     data.purchases = (data.purchases||[]).filter(x=>x.id!==id);
-    saveData('purchases'); renderPurchases(); toast('Deleted');
+    saveData(); renderPurchases(); toast('Deleted');
   });
 }
 
@@ -1266,13 +1113,13 @@ function saveSale(id) {
   data.sales = ensureArrays(data).sales;
   if (id) data.sales = data.sales.map(x=>x.id===id?{...rec,id}:x);
   else data.sales.push({...rec, id:uid()});
-  saveData('sales'); closeModal(); renderSales(); toast('Sale saved ✓');
+  saveData(); closeModal(); renderSales(); toast('Sale saved ✓');
 }
 
 function delSale(id) {
   confirmDialog('Delete this sale? This cannot be undone.', () => {
     data.sales = (data.sales||[]).filter(x=>x.id!==id);
-    saveData('sales'); renderSales(); toast('Deleted');
+    saveData(); renderSales(); toast('Deleted');
   });
 }
 
@@ -1351,13 +1198,13 @@ function savePayment(id) {
   };
   if (id) data.payments = data.payments.map(x=>x.id===id?{...rec,id}:x);
   else data.payments.push({...rec, id:uid()});
-  saveData('payments'); closeModal(); renderPayments(); toast(id?'Payment updated ✓':'Payment recorded ✓');
+  saveData(); closeModal(); renderPayments(); toast(id?'Payment updated ✓':'Payment recorded ✓');
 }
 
 function delPayment(id) {
   confirmDialog('Delete this payment? This cannot be undone.', () => {
     data.payments = (data.payments||[]).filter(x=>x.id!==id);
-    saveData('payments'); renderPayments(); toast('Deleted');
+    saveData(); renderPayments(); toast('Deleted');
   });
 }
 
@@ -1443,13 +1290,13 @@ function saveExpense(id) {
   data.expenses = ensureArrays(data).expenses;
   if (id) data.expenses = data.expenses.map(x=>x.id===id?{...rec,id}:x);
   else data.expenses.push({...rec, id:uid()});
-  saveData('expenses'); closeModal(); renderExpenses(); toast(id?'Expense updated ✓':'Expense saved ✓');
+  saveData(); closeModal(); renderExpenses(); toast(id?'Expense updated ✓':'Expense saved ✓');
 }
 
 function delExpense(id) {
   confirmDialog('Delete this expense? This cannot be undone.', () => {
     data.expenses = (data.expenses||[]).filter(x=>x.id!==id);
-    saveData('expenses'); renderExpenses(); toast('Deleted');
+    saveData(); renderExpenses(); toast('Deleted');
   });
 }
 
@@ -1521,7 +1368,7 @@ function saveFarmer(id) {
   data.farmers = ensureArrays(data).farmers;
   if (id) data.farmers = data.farmers.map(x=>x.id===id?{...x,...rec}:x);
   else data.farmers.push({...rec, id:uid()});
-  saveData('farmers'); closeModal(); renderFarmers(); toast('Farmer saved ✓');
+  saveData(); closeModal(); renderFarmers(); toast('Farmer saved ✓');
 }
 
 function delFarmer(id) {
@@ -1531,7 +1378,7 @@ function delFarmer(id) {
     : 'Delete this farmer?';
   confirmDialog(msg, () => {
     data.farmers = (data.farmers||[]).filter(x=>x.id!==id);
-    saveData('farmers'); renderFarmers(); toast('Deleted');
+    saveData(); renderFarmers(); toast('Deleted');
   });
 }
 
@@ -1601,7 +1448,7 @@ function saveTrader(id) {
   data.traders = ensureArrays(data).traders;
   if (id) data.traders = data.traders.map(x=>x.id===id?{...x,...rec}:x);
   else data.traders.push({...rec, id:uid()});
-  saveData('traders'); closeModal(); renderTraders(); toast('Trader saved ✓');
+  saveData(); closeModal(); renderTraders(); toast('Trader saved ✓');
 }
 
 function delTrader(id) {
@@ -1611,7 +1458,7 @@ function delTrader(id) {
     : 'Delete this trader?';
   confirmDialog(msg, () => {
     data.traders = (data.traders||[]).filter(x=>x.id!==id);
-    saveData('traders'); renderTraders(); toast('Deleted');
+    saveData(); renderTraders(); toast('Deleted');
   });
 }
 
@@ -1865,7 +1712,7 @@ function openFirebaseSetup() {
             <input type="text" id="fbApiKey" value="${cfg?cfg.apiKey:''}" placeholder="AIzaSy...">
           </div>
           <div class="field">
-            <label>Database URL * <span style="font-size:9px;color:var(--faint)">(ends in .firebaseio.com)</span></label>
+            <label>Database URL * <span style="font-size:9px;color:var(--faint)">(e.g., .firebaseio.com or .firebasedatabase.app)</span></label>
             <input type="text" id="fbDbUrl" value="${cfg?cfg.databaseURL:''}" placeholder="https://your-project-default-rtdb.firebaseio.com">
           </div>
           <div class="field">
@@ -1949,8 +1796,11 @@ async function connectFirebase() {
   if (!apiKey)       return toast('API Key is required', true);
   if (!databaseURL)  return toast('Database URL is required', true);
   if (!projectId)    return toast('Project ID is required', true);
-  if (!databaseURL.includes('firebaseio.com')) return toast('Database URL must end in .firebaseio.com', true);
-  const config = { apiKey, authDomain, databaseURL, projectId };
+  const cleanedDbUrl = databaseURL.replace(/\/$/, "");
+  if (!cleanedDbUrl.includes('firebaseio.com') && !cleanedDbUrl.includes('firebasedatabase.app')) {
+  return toast('Invalid Database URL format', true);
+}
+  const config = { apiKey, authDomain, databaseURL: cleanedDbUrl, projectId };
   toast('Connecting to Firebase...');
   const ok = await initFirebase(config);
   if (ok) { closeModal(); toast('☁ Connected! Pulling latest data...'); }
@@ -2407,72 +2257,6 @@ function ensureArrays(d) {
 }
 
 // ═══════════════════════════════════════════════
-//  PWA — SERVICE WORKER & INSTALL PROMPT
-// ═══════════════════════════════════════════════
-let _deferredInstallPrompt = null;
-
-function initPWA() {
-  // Register Service Worker
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
-      // Check for updates
-      reg.addEventListener('updatefound', () => {
-        const newWorker = reg.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // New version available — show update bar
-            document.getElementById('pwaUpdateBar').classList.add('show');
-          }
-        });
-      });
-    }).catch(e => console.log('[SW] Registration failed:', e));
-  }
-
-  // Install prompt — capture for later
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    _deferredInstallPrompt = e;
-    // Show install bar after 5s if not already installed
-    const dismissed = localStorage.getItem('pwa_install_dismissed');
-    if (!dismissed) {
-      setTimeout(() => {
-        document.getElementById('pwaInstallBar').classList.add('show');
-      }, 5000);
-    }
-  });
-
-  // Hide install bar when app is installed
-  window.addEventListener('appinstalled', () => {
-    document.getElementById('pwaInstallBar').classList.remove('show');
-    _deferredInstallPrompt = null;
-    toast('App installed successfully! ✓');
-  });
-}
-
-function applyPWAUpdate() {
-  if (navigator.serviceWorker.controller) {
-    navigator.serviceWorker.controller.postMessage('skipWaiting');
-  }
-  window.location.reload();
-}
-
-function triggerInstall() {
-  if (_deferredInstallPrompt) {
-    _deferredInstallPrompt.prompt();
-    _deferredInstallPrompt.userChoice.then(choice => {
-      if (choice.outcome === 'accepted') toast('Installing app... ✓');
-      _deferredInstallPrompt = null;
-    });
-  }
-  document.getElementById('pwaInstallBar').classList.remove('show');
-}
-
-function dismissInstall() {
-  document.getElementById('pwaInstallBar').classList.remove('show');
-  localStorage.setItem('pwa_install_dismissed', '1');
-}
-
-// ═══════════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════════
 (async function init() {
@@ -2480,16 +2264,11 @@ function dismissInstall() {
   customization = loadCustomization();
   applyCustomization();
 
-  // Check for crash-journal recovery before loading
-  await recoverPending();
-
-  // Load data: IndexedDB → localStorage → defaults
-  const local = await loadLocal();
+  const local = loadLocal();
   data = ensureArrays(migrateData(local || JSON.parse(JSON.stringify(DEFAULT_DATA))));
-  if (!local) await saveLocal();
+  if (!local) saveLocal();
   renderDashboard();
 
-  // Connect Firebase if previously configured
   const cfg = loadFirebaseConfig();
   if (cfg) {
     setSyncStatus('syncing');
@@ -2498,10 +2277,7 @@ function dismissInstall() {
     setSyncStatus('');
   }
 
-  // PWA init
-  initPWA();
-
-  // Periodic backup reminder
+  // Periodic backup reminder: if no export in 7+ days, show a gentle nudge
   checkBackupReminder();
 })();
 </script>
