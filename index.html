@@ -1,0 +1,2509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Farmedge">
+<meta name="theme-color" content="#07071a">
+<title>AG Farmedge Global</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style id="cardShadowStyle"></style>
+<style id="animStyle">.no-animations *{animation:none!important;transition:none!important}</style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#07071a;--card:#0e0e24;--sidebar:#0b0b1e;--border:#1a1a38;--borderL:#2a2a50;
+  --text:#cccce0;--dim:#7777a0;--faint:#44445a;--white:#f0f0ff;
+  --onion:#e8533a;--cotton:#4fa8e8;--profit:#3db87a;--loss:#e84444;
+  --amber:#f0a020;--purple:#a070e0;--input:#12122c;--header:#090920;
+  --radius:12px;--radius-sm:8px;
+  --font-size-base:13px;--nav-height:54px;--card-padding:12px;--page-padding:14px;
+  --nav-icon-size:17px;--nav-label-size:9px;
+}
+
+/* ── THEME: LIGHT ─────────────────────────── */
+body.theme-light{
+  --bg:#f0f2f7;
+  --card:#ffffff;
+  --sidebar:#e4e7ef;
+  --border:#d0d4e0;
+  --borderL:#b0b8cc;
+  --text:#1e2030;        /* dark body text — readable on white cards */
+  --dim:#4a5068;         /* secondary text — dark enough on light bg */
+  --faint:#8890a8;       /* muted labels */
+  --white:#0d0f1a;       /* used for headings/titles — near-black on light */
+  --input:#f5f6fa;
+  --header:#ffffff;
+  /* keep accent/profit/loss colours vivid so they read on white */
+  --onion:#d44020;
+  --cotton:#1a7ec8;
+  --profit:#1a8f50;
+  --loss:#c83030;
+  --amber:#b87000;
+  --purple:#7040c0;
+}
+/* ── THEME: FOREST ────────────────────────── */
+body.theme-forest{
+  --bg:#071410;--card:#0d1f18;--sidebar:#091a13;--border:#1a3026;--borderL:#2a4a38;
+  --text:#c0d8c8;--dim:#6a9a7a;--faint:#3a5a48;--white:#e8f8f0;
+  --onion:#5db87a;--cotton:#48c890;--profit:#78d898;--loss:#e84444;
+  --amber:#b8d040;--purple:#70c0a0;--input:#0a1a12;--header:#060f0b;
+}
+/* ── THEME: SAFFRON ───────────────────────── */
+body.theme-saffron{
+  --bg:#1a0e00;--card:#241400;--sidebar:#1c1000;--border:#382000;--borderL:#503000;
+  --text:#e8d0a0;--dim:#a07840;--faint:#604820;--white:#fff0d0;
+  --onion:#f07020;--cotton:#e8a030;--profit:#90c848;--loss:#e84444;
+  --amber:#f8c020;--purple:#d080e0;--input:#180c00;--header:#120800;
+}
+/* ── THEME: OCEAN ─────────────────────────── */
+body.theme-ocean{
+  --bg:#020d1a;--card:#051525;--sidebar:#03101e;--border:#0a2030;--borderL:#103050;
+  --text:#a8c8e8;--dim:#4880a8;--faint:#204060;--white:#d8f0ff;
+  --onion:#20a8e8;--cotton:#40c0f8;--profit:#38d898;--loss:#e85050;
+  --amber:#f8a820;--purple:#8080f0;--input:#031020;--header:#010b15;
+}
+/* ── THEME: SLATE ─────────────────────────── */
+body.theme-slate{
+  --bg:#0c0c0c;--card:#181818;--sidebar:#141414;--border:#282828;--borderL:#383838;
+  --text:#c8c8c8;--dim:#707070;--faint:#404040;--white:#f0f0f0;
+  --onion:#e06060;--cotton:#60a8e0;--profit:#60c878;--loss:#e05050;
+  --amber:#d8a040;--purple:#a070c8;--input:#101010;--header:#080808;
+}
+
+/* ── COMPACT / COMFORTABLE DENSITY ───────── */
+body.density-compact{
+  --card-padding:8px;--page-padding:10px;--nav-height:46px;--font-size-base:12px;
+}
+body.density-comfortable{
+  --card-padding:16px;--page-padding:18px;--nav-height:60px;--font-size-base:14px;
+}
+
+/* ── BORDER RADIUS SCALES ─────────────────── */
+body.radius-sharp{ --radius:4px;--radius-sm:3px; }
+body.radius-medium{ --radius:8px;--radius-sm:6px; }
+body.radius-pill{ --radius:20px;--radius-sm:12px; }
+
+/* ── SETTINGS PAGE ────────────────────────── */
+.settings-section{margin-bottom:20px}
+.settings-section-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.theme-swatch{border:2px solid var(--border);border-radius:10px;padding:10px 8px;cursor:pointer;text-align:center;transition:all .15s;background:var(--card)}
+.theme-swatch.active{border-color:var(--onion);box-shadow:0 0 0 2px var(--onion)33}
+.theme-swatch-preview{height:28px;border-radius:6px;margin-bottom:6px;display:flex;gap:3px;padding:4px;overflow:hidden}
+.theme-swatch-preview span{flex:1;border-radius:3px}
+.theme-swatch-name{font-size:10px;font-weight:700;color:var(--text)}
+.option-row{display:flex;gap:8px;flex-wrap:wrap}
+.option-chip{padding:6px 12px;border-radius:20px;border:1.5px solid var(--borderL);font-size:11px;font-weight:700;cursor:pointer;color:var(--dim);background:var(--card);transition:all .15s;font-family:'Noto Sans',sans-serif}
+.option-chip.active{border-color:var(--onion);color:var(--onion);background:var(--onion)15}
+.color-picker-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.color-picker-row label{font-size:11px;color:var(--dim);flex:1;font-weight:600}
+.color-picker-row input[type=color]{width:40px;height:32px;border:1.5px solid var(--borderL);border-radius:8px;cursor:pointer;padding:2px;background:var(--input)}
+.settings-divider{height:1px;background:var(--border);margin:6px 0 14px}
+.brand-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.range-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.range-row label{font-size:11px;color:var(--dim);width:100px;font-weight:600}
+.range-row input[type=range]{flex:1;accent-color:var(--onion)}
+.range-row span{font-size:11px;color:var(--text);width:32px;text-align:right}
+.nav-style-preview{display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--borderL);margin-bottom:8px}
+.nav-style-preview span{flex:1;padding:6px 4px;text-align:center;font-size:9px;font-weight:700;color:var(--dim);background:var(--card)}
+.reset-section{margin-top:6px;padding-top:14px;border-top:1px solid var(--border)}
+html,body{height:100%;overflow:hidden;background:var(--bg)}
+body{font-family:'Noto Sans',sans-serif;color:var(--text);display:flex;flex-direction:column;font-size:var(--font-size-base)}
+body.font-baloo *:not(.logo-text):not(.logo-sub):not(.nav-label):not(.page-title):not(.modal-title):not(.stat-mini-val):not(.dash-stat-val):not(.total-preview-val):not(.pl-total-val):not(.activity-amt):not(.party-stat-val):not(.report-section-title){font-family:'Baloo 2',sans-serif}
+body.font-mono{font-family:'Courier New',Courier,monospace}
+
+/* HEADER */
+.app-header{background:var(--header);border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo-area{display:flex;align-items:center;gap:10px}
+.logo-icon{font-size:22px}
+.logo-text{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:var(--white);letter-spacing:.3px}
+.logo-sub{font-size:9px;color:var(--onion);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.sync-area{display:flex;align-items:center;gap:8px}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--faint);transition:background .3s}
+.sync-dot.synced{background:var(--profit)}
+.sync-dot.syncing{background:var(--amber);animation:pulse 1s infinite}
+.sync-dot.offline{background:var(--loss)}
+.sync-label{font-size:10px;color:var(--dim)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.firebase-btn{background:transparent;border:1px solid var(--borderL);color:var(--dim);font-size:10px;padding:4px 9px;border-radius:6px;cursor:pointer;font-family:'Noto Sans',sans-serif;transition:all .2s}
+.firebase-btn:hover{border-color:var(--onion);color:var(--onion)}
+
+/* LAYOUT */
+.app-body{
+  flex:1;overflow:hidden;
+  display:flex;flex-direction:column; /* default: column = page-area on top, nav on bottom */
+  min-height:0;
+}
+.page-area{
+  flex:1;overflow:hidden;
+  display:flex;flex-direction:column;
+  min-height:0;min-width:0;
+  order:1; /* default: page-area before nav in column layout */
+}
+.page{display:none;flex-direction:column;flex:1;overflow:hidden;min-height:0}
+.page.active{display:flex}
+.page-scroll{flex:1;overflow-y:auto;padding:var(--page-padding);padding-bottom:4px}
+.page-scroll::-webkit-scrollbar{width:3px}
+.page-scroll::-webkit-scrollbar-track{background:transparent}
+.page-scroll::-webkit-scrollbar-thumb{background:var(--borderL);border-radius:3px}
+
+/* NAV BASE — default bottom bar */
+.bottom-nav{
+  background:var(--sidebar);
+  display:flex;flex-direction:row;flex-shrink:0;flex-wrap:nowrap;
+  border-top:1px solid var(--border);
+  min-height:var(--nav-height);
+  order:2; /* appears after page-area in column layout */
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:7px 2px 6px;cursor:pointer;gap:2px;
+  border-top:3px solid transparent;
+  border-bottom:3px solid transparent;
+  border-left:3px solid transparent;
+  border-right:3px solid transparent;
+  transition:border-color .15s,background .15s;
+}
+.nav-item.active{border-top-color:var(--onion)}
+.nav-icon{font-size:var(--nav-icon-size);line-height:1.2;display:block;text-align:center}
+.nav-label{font-size:var(--nav-label-size);font-weight:700;color:var(--faint);font-family:'Baloo 2',sans-serif;line-height:1.2;white-space:nowrap}
+.nav-item.active .nav-label{color:var(--onion)}
+
+/* NAV STYLE: PILL */
+body.nav-pill .bottom-nav{padding:5px 8px;gap:3px}
+body.nav-pill .nav-item{
+  border-top-color:transparent!important;border-bottom-color:transparent!important;
+  border-left-color:transparent!important;border-right-color:transparent!important;
+  border-radius:10px;padding:6px 2px;
+}
+body.nav-pill .nav-item.active{background:rgba(232,83,58,0.15);}
+
+/* ── NAV POSITION: TOP ──────────────────────── */
+body.nav-top .app-body{flex-direction:column}
+body.nav-top .page-area{order:2}
+body.nav-top .bottom-nav{
+  order:1;
+  flex-direction:row;
+  border-top:none;
+  border-bottom:1px solid var(--border);
+  min-height:var(--nav-height);
+  width:100%;
+}
+body.nav-top .nav-item{
+  border-top-color:transparent!important;
+  border-left-color:transparent!important;border-right-color:transparent!important;
+  border-bottom:3px solid transparent;
+  padding:6px 2px 7px;
+}
+body.nav-top .nav-item.active{
+  border-bottom-color:var(--onion)!important;
+  border-top-color:transparent!important;
+}
+
+/* ── NAV POSITION: LEFT ─────────────────────── */
+body.nav-left .app-body{flex-direction:row}
+body.nav-left .page-area{order:2;flex:1;min-width:0}
+body.nav-left .bottom-nav{
+  order:1;
+  flex-direction:column;
+  flex-shrink:0;
+  width:62px;min-height:unset;height:auto;
+  border-top:none;border-bottom:none;
+  border-right:1px solid var(--border);border-left:none;
+  overflow-y:auto;overflow-x:hidden;
+}
+body.nav-left .nav-item{
+  flex:0 0 auto;width:100%;
+  border-top-color:transparent!important;border-bottom-color:transparent!important;
+  border-right-color:transparent!important;
+  border-left:3px solid transparent;
+  padding:11px 2px;
+}
+body.nav-left .nav-item.active{
+  border-left-color:var(--onion)!important;
+  border-top-color:transparent!important;
+  background:rgba(232,83,58,0.10);
+}
+
+/* ── NAV POSITION: RIGHT ────────────────────── */
+body.nav-right .app-body{flex-direction:row}
+body.nav-right .page-area{order:1;flex:1;min-width:0}
+body.nav-right .bottom-nav{
+  order:2;
+  flex-direction:column;
+  flex-shrink:0;
+  width:62px;min-height:unset;height:auto;
+  border-top:none;border-bottom:none;
+  border-left:1px solid var(--border);border-right:none;
+  overflow-y:auto;overflow-x:hidden;
+}
+body.nav-right .nav-item{
+  flex:0 0 auto;width:100%;
+  border-top-color:transparent!important;border-bottom-color:transparent!important;
+  border-left-color:transparent!important;
+  border-right:3px solid transparent;
+  padding:11px 2px;
+}
+body.nav-right .nav-item.active{
+  border-right-color:var(--onion)!important;
+  border-top-color:transparent!important;
+  background:rgba(232,83,58,0.10);
+}
+
+/* NAV: HIDE LABELS */
+body.nav-nolabels .nav-label{display:none}
+body.nav-nolabels .nav-item{padding:10px 2px}
+
+/* ── NAV PILL + LEFT/RIGHT conflict fix ─────── */
+/* When nav is vertical (left/right), pill border-radius looks wrong.
+   Override pill styles so the position-specific indicator wins cleanly. */
+body.nav-left.nav-pill .nav-item,
+body.nav-right.nav-pill .nav-item{
+  border-radius:0;
+}
+body.nav-left.nav-pill .nav-item.active,
+body.nav-right.nav-pill .nav-item.active{
+  background:rgba(232,83,58,0.10);
+}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:var(--card-padding);margin-bottom:9px;transition:border-color .15s}
+.card:hover{border-color:var(--borderL)}
+.stat-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.stat-mini{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px}
+.stat-mini-lbl{font-size:10px;color:var(--dim)}
+.stat-mini-val{font-weight:800;font-size:14px;margin-top:2px;font-family:'Baloo 2',sans-serif}
+
+/* PAGE HEADER */
+.page-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.page-title{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:19px;color:var(--white)}
+
+/* BUTTONS */
+.btn{border-radius:var(--radius-sm);padding:8px 14px;font-weight:700;font-size:12px;cursor:pointer;border:1.5px solid;transition:all .15s;font-family:'Noto Sans',sans-serif;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-xs{padding:3px 8px;font-size:10px}
+.btn-onion{background:var(--onion);border-color:var(--onion);color:#fff}
+.btn-onion-o{background:transparent;border-color:var(--onion);color:var(--onion)}
+.btn-cotton{background:var(--cotton);border-color:var(--cotton);color:#fff}
+.btn-cotton-o{background:transparent;border-color:var(--cotton);color:var(--cotton)}
+.btn-profit{background:var(--profit);border-color:var(--profit);color:#fff}
+.btn-amber{background:var(--amber);border-color:var(--amber);color:#000}
+.btn-amber-o{background:transparent;border-color:var(--amber);color:var(--amber)}
+.btn-danger{background:transparent;border-color:var(--loss);color:var(--loss)}
+.btn-ghost{background:transparent;border-color:var(--borderL);color:var(--dim)}
+.btn-row{display:flex;gap:8px;margin-top:14px}
+.btn-row .btn{flex:1}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.3px}
+
+/* FORM */
+.field{margin-bottom:11px}
+.field label{display:block;font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;background:var(--input);border:1px solid var(--borderL);border-radius:var(--radius-sm);padding:8px 10px;color:var(--white);font-size:13px;font-family:'Noto Sans',sans-serif;outline:none;transition:border-color .15s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--onion)}
+.field select option{background:var(--input);color:var(--white)}
+.field textarea{resize:vertical;min-height:56px}
+.field-row{display:grid;gap:8px}
+.field-row.col2{grid-template-columns:1fr 1fr}
+.field-row.col3{grid-template-columns:1fr 1fr 1fr}
+.total-preview{background:var(--bg);border-radius:var(--radius-sm);padding:11px 12px;margin:10px 0;border:1px solid var(--border)}
+.total-preview-lbl{font-size:10px;color:var(--dim);margin-bottom:3px}
+.total-preview-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--borderL);border-radius:20px 20px 0 0;padding:18px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;animation:slideUp .25s ease}
+@keyframes slideUp{from{transform:translateY(30px);opacity:.7}to{transform:translateY(0);opacity:1}}
+.modal-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.modal-title{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;color:var(--white)}
+.modal-close{background:var(--bg);border:1px solid var(--borderL);color:var(--dim);width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:color .15s}
+.modal-close:hover{color:var(--white)}
+
+/* DASHBOARD STATS */
+.dash-stat{display:flex;justify-content:space-between;align-items:center;padding:11px 13px;border-radius:var(--radius);border:1px solid;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.dash-stat:hover{filter:brightness(1.1)}
+.dash-stat-label{font-size:11px;color:var(--dim);margin-top:2px}
+.dash-stat-icon{font-size:20px;margin-bottom:3px}
+.dash-stat-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:18px}
+
+/* ACTIVITY */
+.activity-item{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-label{font-size:12px;color:var(--text)}
+.activity-date{font-size:10px;color:var(--faint);margin-top:2px}
+.activity-amt{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:13px}
+
+/* PARTY CARD */
+.party-card-stats{display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.party-stat-lbl{font-size:10px;color:var(--faint)}
+.party-stat-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:13px;margin-top:1px}
+
+/* TRANSACTION CARD */
+.txn-meta{font-size:11px;color:var(--dim);margin-top:2px}
+.txn-weight{font-size:10px;color:var(--faint);margin-top:4px}
+
+/* REPORT */
+.report-section-title{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;margin:14px 0 8px}
+.pl-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.pl-row:last-child{border-bottom:none}
+.pl-total{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px}
+.pl-total-lbl{font-size:12px;color:var(--dim)}
+.pl-total-val{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:26px}
+
+/* FIREBASE SETUP MODAL */
+.setup-step{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:10px}
+.setup-step-num{display:inline-block;width:22px;height:22px;border-radius:50%;background:var(--onion);color:#fff;font-size:11px;font-weight:700;text-align:center;line-height:22px;margin-right:8px;flex-shrink:0}
+.setup-step-title{font-weight:700;font-size:13px;color:var(--white);display:flex;align-items:center;margin-bottom:6px}
+.setup-step-desc{font-size:11px;color:var(--dim);line-height:1.6;margin-left:30px}
+.setup-step-desc a{color:var(--cotton);text-decoration:none}
+.copy-box{background:var(--input);border:1px solid var(--borderL);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--cotton);font-family:monospace;margin:6px 0 6px 30px;word-break:break-all;cursor:pointer;transition:border-color .2s}
+.copy-box:hover{border-color:var(--cotton)}
+
+/* SEARCH BAR */
+.search-bar{display:flex;gap:8px;margin-bottom:10px;align-items:center}
+.search-input{flex:1;background:var(--input);border:1px solid var(--borderL);border-radius:var(--radius-sm);padding:7px 10px;color:var(--white);font-size:12px;font-family:'Noto Sans',sans-serif;outline:none}
+.search-input:focus{border-color:var(--onion)}
+.search-input::placeholder{color:var(--faint)}
+.filter-chip{padding:5px 10px;border-radius:20px;border:1.5px solid var(--borderL);font-size:10px;font-weight:700;cursor:pointer;color:var(--dim);background:var(--card);white-space:nowrap}
+.filter-chip.active{border-color:var(--onion);color:var(--onion);background:var(--onion)15}
+/* REPORT TABS */
+.report-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.report-tab{padding:6px 12px;border-radius:20px;border:1.5px solid var(--borderL);font-size:11px;font-weight:700;cursor:pointer;color:var(--dim);background:var(--card)}
+.report-tab.active{border-color:var(--onion);color:var(--onion);background:var(--onion)15}
+/* EXPENSE CATEGORY BAR */
+.cat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cat-bar-label{font-size:11px;color:var(--dim);width:90px;flex-shrink:0}
+.cat-bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.cat-bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+.cat-bar-val{font-size:11px;font-weight:700;color:var(--text);width:70px;text-align:right}
+.empty-state{text-align:center;padding:40px 20px;color:var(--dim)}
+.empty-icon{font-size:36px;margin-bottom:8px}
+.empty-text{font-size:13px}
+
+/* TOAST */
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--card);border:1.5px solid var(--profit);color:var(--profit);padding:8px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+.toast.show{opacity:1}
+.toast.error{background:var(--card);border-color:var(--loss);color:var(--loss)}
+
+/* RESPONSIVE */
+@media(max-width:400px){
+  .field-row.col3{grid-template-columns:1fr 1fr}
+}
+
+/* PWA UPDATE BANNER */
+.pwa-update-bar{position:fixed;top:0;left:0;right:0;z-index:9999;background:var(--cotton);color:#fff;font-size:12px;font-weight:700;padding:8px 14px;display:flex;align-items:center;justify-content:space-between;transform:translateY(-100%);transition:transform .3s ease;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.pwa-update-bar.show{transform:translateY(0)}
+.pwa-install-bar{position:fixed;bottom:70px;left:12px;right:12px;z-index:9000;background:var(--card);border:1.5px solid var(--onion);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;transform:translateY(100px);opacity:0;transition:all .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+.pwa-install-bar.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="app-header">
+  <div class="logo-area">
+    <span class="logo-icon">🌿</span>
+    <div>
+      <div class="logo-text">AG Farmedge Global</div>
+      <div class="logo-sub">Onion &amp; Cotton Traders</div>
+    </div>
+  </div>
+  <div class="sync-area">
+    <div class="sync-dot" id="syncDot"></div>
+    <span class="sync-label" id="syncLabel">Local</span>
+    <button class="firebase-btn" onclick="openFirebaseSetup()">☁ Data &amp; Sync</button>
+  </div>
+</div>
+
+<!-- PAGES -->
+<div class="app-body">
+<div class="page-area">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-scroll" id="dashContent"></div>
+  </div>
+
+  <!-- PURCHASES -->
+  <div class="page" id="page-purchases">
+    <div class="page-scroll" id="purchasesContent"></div>
+  </div>
+
+  <!-- SALES -->
+  <div class="page" id="page-sales">
+    <div class="page-scroll" id="salesContent"></div>
+  </div>
+
+  <!-- PAYMENTS -->
+  <div class="page" id="page-payments">
+    <div class="page-scroll" id="paymentsContent"></div>
+  </div>
+
+  <!-- EXPENSES -->
+  <div class="page" id="page-expenses">
+    <div class="page-scroll" id="expensesContent"></div>
+  </div>
+
+  <!-- FARMERS -->
+  <div class="page" id="page-farmers">
+    <div class="page-scroll" id="farmersContent"></div>
+  </div>
+
+  <!-- TRADERS -->
+  <div class="page" id="page-traders">
+    <div class="page-scroll" id="tradersContent"></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="page" id="page-reports">
+    <div class="page-scroll" id="reportsContent"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="page-scroll" id="settingsContent"></div>
+  </div>
+
+</div><!-- /page-area -->
+
+<!-- BOTTOM NAV — inside app-body so flex-direction row/column works for all positions -->
+<div class="bottom-nav">
+  <div class="nav-item active" onclick="goTab('dashboard')" id="nav-dashboard"><span class="nav-icon">📊</span><span class="nav-label">Home</span></div>
+  <div class="nav-item" onclick="goTab('purchases')" id="nav-purchases"><span class="nav-icon">🧅</span><span class="nav-label">Buy</span></div>
+  <div class="nav-item" onclick="goTab('sales')" id="nav-sales"><span class="nav-icon">🏪</span><span class="nav-label">Sell</span></div>
+  <div class="nav-item" onclick="goTab('payments')" id="nav-payments"><span class="nav-icon">💳</span><span class="nav-label">Pay</span></div>
+  <div class="nav-item" onclick="goTab('expenses')" id="nav-expenses"><span class="nav-icon">💼</span><span class="nav-label">Exp</span></div>
+  <div class="nav-item" onclick="goTab('farmers')" id="nav-farmers"><span class="nav-icon">👨‍🌾</span><span class="nav-label">Farmers</span></div>
+  <div class="nav-item" onclick="goTab('traders')" id="nav-traders"><span class="nav-icon">🏬</span><span class="nav-label">Traders</span></div>
+  <div class="nav-item" onclick="goTab('reports')" id="nav-reports"><span class="nav-icon">📈</span><span class="nav-label">Report</span></div>
+  <div class="nav-item" onclick="goTab('settings')" id="nav-settings"><span class="nav-icon">⚙️</span><span class="nav-label">Settings</span></div>
+</div>
+
+</div><!-- /app-body -->
+
+<!-- MODAL CONTAINER -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modalBox"></div>
+</div>
+
+<!-- PWA UPDATE BAR -->
+<div class="pwa-update-bar" id="pwaUpdateBar">
+  <span>🔄 Update available!</span>
+  <button onclick="applyPWAUpdate()" style="background:#fff;color:var(--cotton);border:none;padding:4px 10px;border-radius:6px;font-weight:700;cursor:pointer;font-size:11px">Refresh</button>
+</div>
+
+<!-- PWA INSTALL PROMPT -->
+<div class="pwa-install-bar" id="pwaInstallBar">
+  <div>
+    <div style="font-weight:700;font-size:13px;color:var(--white)">📲 Install App</div>
+    <div style="font-size:11px;color:var(--dim);margin-top:2px">Add to homescreen for desktop-like experience</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button onclick="triggerInstall()" style="background:var(--onion);border:none;color:#fff;padding:6px 12px;border-radius:8px;font-weight:700;cursor:pointer;font-size:12px">Install</button>
+    <button onclick="dismissInstall()" style="background:transparent;border:1px solid var(--borderL);color:var(--dim);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px">✕</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, onValue, off, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+window._firebase = { initializeApp, getDatabase, ref, set, get, onValue, off, remove };
+window._firebaseReady = true;
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
+
+<script>
+// ═══════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════
+const SK = 'agfarmedge_v2';
+const FK = 'agfarmedge_firebase_config';
+const C = {
+  onion:'#e8533a', cotton:'#4fa8e8', profit:'#3db87a', loss:'#e84444',
+  amber:'#f0a020', purple:'#a070e0', white:'#f0f0ff', dim:'#7777a0', faint:'#44445a'
+};
+const COMM_COLOR = { Onion: C.onion, Cotton: C.cotton };
+const EXP_CATS = {
+  Transport: ['Truck Hire','Freight Charges','Toll','Fuel','Other'],
+  Labour: ['Loading','Unloading','Sorting','Cleaning','Other'],
+  Packaging: ['Jute Bags','Plastic Bags','Net Bags','Twine/Rope','Other'],
+  Other: ['Mandi Fee','Commission','Miscellaneous']
+};
+const PAY_MODES = ['Cash','NEFT','UPI','Cheque','RTGS'];
+
+// ═══════════════════════════════════════════════
+//  DEFAULT DATA
+// ═══════════════════════════════════════════════
+const DEFAULT_DATA = {
+  farmers: [
+    {id:1,name:'Ramesh Patil',village:'Nashik',phone:'9876543210',commodity:'Onion'},
+    {id:2,name:'Suresh Jadhav',village:'Solapur',phone:'9876501234',commodity:'Onion'},
+    {id:3,name:'Mahesh Patel',village:'Surat',phone:'9123456789',commodity:'Cotton'}
+  ],
+  traders: [
+    {id:1,name:'Sharma Traders',city:'Delhi',phone:'9911223344',commodity:'Onion'},
+    {id:2,name:'Gupta & Sons',city:'Mumbai',phone:'9922334455',commodity:'Onion'},
+    {id:3,name:'Mehta Trading Co.',city:'Ahmedabad',phone:'9933445566',commodity:'Cotton'}
+  ],
+  purchases: [
+    {id:1,farmerId:1,date:'2025-05-01',commodity:'Onion',bags:50,weightKg:2500,ratePerKg:18,totalAmount:45000,paidAmount:30000,notes:'Good quality'},
+    {id:2,farmerId:2,date:'2025-05-03',commodity:'Onion',bags:80,weightKg:4000,ratePerKg:17,totalAmount:68000,paidAmount:68000,notes:''},
+    {id:3,farmerId:3,date:'2025-05-05',commodity:'Cotton',bags:30,weightKg:1800,ratePerKg:62,totalAmount:111600,paidAmount:50000,notes:'First lot'}
+  ],
+  sales: [
+    {id:1,traderId:1,date:'2025-05-04',commodity:'Onion',bags:60,weightKg:3000,ratePerKg:22,totalAmount:66000,receivedAmount:66000,notes:''},
+    {id:2,traderId:2,date:'2025-05-06',commodity:'Onion',bags:40,weightKg:2000,ratePerKg:21,totalAmount:42000,receivedAmount:20000,notes:'Balance pending'},
+    {id:3,traderId:3,date:'2025-05-08',commodity:'Cotton',bags:25,weightKg:1500,ratePerKg:68,totalAmount:102000,receivedAmount:102000,notes:''}
+  ],
+  payments: [
+    {id:1,type:'to_farmer',partyId:1,date:'2025-05-07',amount:10000,mode:'Cash',note:'Partial payment'},
+    {id:2,type:'from_trader',partyId:2,date:'2025-05-09',amount:15000,mode:'NEFT',note:'Advance received'}
+  ],
+  expenses: [
+    {id:1,date:'2025-05-03',category:'Transport',subCategory:'Truck Hire',amount:8000,vendor:'Raju Transport',commodity:'Onion',notes:'Nashik to Delhi'},
+    {id:2,date:'2025-05-04',category:'Labour',subCategory:'Loading',amount:1200,vendor:'Local labour',commodity:'Onion',notes:'50 bags'},
+    {id:3,date:'2025-05-05',category:'Packaging',subCategory:'Jute Bags',amount:2500,vendor:'Bag Store',commodity:'Cotton',notes:'30 bags'}
+  ]
+};
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let data = {};
+let currentTab = 'dashboard';
+let fbApp = null, fbDb = null, fbRef = null;
+let fbConfig = null;
+let syncTimeout = null;
+let isListeningFirebase = false;
+
+// ═══════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════
+const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN');
+const today = () => new Date().toISOString().slice(0,10);
+// Use crypto.randomUUID() for true collision-free IDs across devices/sessions
+const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID)
+  ? crypto.randomUUID()
+  : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function badge(text, color) {
+  return `<span class="badge" style="background:${color}22;border:1px solid ${color}55;color:${color}">${esc(text)}</span>`;
+}
+
+function toast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError?' error':'') + ' show';
+  clearTimeout(t._tid);
+  t._tid = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════
+//  CONFIRM DIALOG (replaces native confirm())
+// ═══════════════════════════════════════════════
+function confirmDialog(msg, onOk, okLabel='Delete', okColor='var(--loss)') {
+  // Create a second overlay on top of everything
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+  overlay.innerHTML = `
+    <div style="background:var(--card);border:1px solid var(--borderL);border-radius:16px;padding:22px;max-width:320px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.5)">
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;color:var(--white);margin-bottom:10px">Confirm</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:18px">${msg}</div>
+      <div style="display:flex;gap:10px">
+        <button id="_cdOk" style="flex:1;background:${okColor};border:none;color:#fff;font-weight:700;font-size:13px;padding:9px;border-radius:8px;cursor:pointer">${okLabel}</button>
+        <button id="_cdCancel" style="flex:1;background:var(--card);border:1.5px solid var(--borderL);color:var(--dim);font-weight:700;font-size:13px;padding:9px;border-radius:8px;cursor:pointer">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const close = () => document.body.removeChild(overlay);
+  overlay.querySelector('#_cdOk').onclick = () => { close(); onOk(); };
+  overlay.querySelector('#_cdCancel').onclick = close;
+  overlay.onclick = (e) => { if (e.target === overlay) close(); };
+}
+
+// ═══════════════════════════════════════════════
+//  SCHEMA VERSION & MIGRATION
+// ═══════════════════════════════════════════════
+const SCHEMA_VERSION = 5;
+
+function migrateData(d) {
+  // Ensure every record has the fields introduced in v5+
+  (d.purchases||[]).forEach(p => {
+    if (p.bags === undefined) p.bags = 0;
+    if (p.notes === undefined) p.notes = '';
+  });
+  (d.sales||[]).forEach(s => {
+    if (s.bags === undefined) s.bags = 0;
+    if (s.notes === undefined) s.notes = '';
+  });
+  (d.payments||[]).forEach(p => {
+    if (p.note === undefined) p.note = '';
+  });
+  (d.expenses||[]).forEach(e => {
+    if (e.vendor === undefined) e.vendor = '';
+    if (e.notes === undefined) e.notes = '';
+    if (e.commodity === undefined) e.commodity = 'Onion';
+  });
+  (d.farmers||[]).forEach(f => {
+    if (f.phone === undefined) f.phone = '';
+  });
+  (d.traders||[]).forEach(t => {
+    if (t.phone === undefined) t.phone = '';
+    if (t.city === undefined) t.city = '';
+  });
+  d._schemaVersion = SCHEMA_VERSION;
+  return d;
+}
+
+// ═══════════════════════════════════════════════
+//  INDEXEDDB — PRIMARY STORAGE (crash-safe, 50MB+)
+//  localStorage used as fast sync cache only
+// ═══════════════════════════════════════════════
+const IDB_NAME = 'agfarmedge_db';
+const IDB_VERSION = 1;
+const IDB_STORE = 'appdata';
+let _idb = null;
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    if (_idb) return resolve(_idb);
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) {
+        db.createObjectStore(IDB_STORE);
+      }
+    };
+    req.onsuccess = e => { _idb = e.target.result; resolve(_idb); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGet(key) {
+  try {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  } catch(e) { return null; }
+}
+
+async function idbSet(key, value) {
+  try {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      const req = tx.objectStore(IDB_STORE).put(value, key);
+      req.onsuccess = () => resolve(true);
+      req.onerror = () => reject(req.error);
+    });
+  } catch(e) { return false; }
+}
+
+// Write-ahead journal: mark intent before save, clear after success
+async function writePending(payload) {
+  await idbSet('_pending', {ts: Date.now(), data: payload});
+}
+async function clearPending() {
+  await idbSet('_pending', null);
+}
+async function recoverPending() {
+  const p = await idbGet('_pending');
+  if (p && p.data) {
+    console.log('[Farmedge] Recovering unsaved data from crash journal...');
+    data = ensureArrays(migrateData(p.data));
+    await saveLocal();
+    await clearPending();
+    toast('Recovered unsaved data after crash ✓');
+  }
+}
+
+async function saveLocal() {
+  const payload = ensureArrays(data);
+  // Write-ahead: record intent before committing
+  await writePending(payload);
+  try {
+    // PRIMARY: IndexedDB
+    await idbSet(SK, payload);
+    // MIRROR: localStorage (fast read on next startup)
+    try { localStorage.setItem(SK, JSON.stringify(payload)); } catch(e) {}
+    await clearPending();
+  } catch(e) {
+    // IndexedDB failed — try localStorage only
+    try {
+      localStorage.setItem(SK, JSON.stringify(payload));
+      await clearPending();
+    } catch(le) {
+      if (le.name === 'QuotaExceededError') {
+        toast('⚠ Storage full! Please export a backup now.', true);
+        setTimeout(() => {
+          confirmDialog(
+            'Your device storage is almost full. Your last change may not have saved. Export a backup now to protect your data.',
+            exportJSON, 'Export Backup', 'var(--amber)'
+          );
+        }, 400);
+      }
+    }
+  }
+}
+
+async function loadLocal() {
+  // 1. Try IndexedDB first (most reliable)
+  try {
+    const idbData = await idbGet(SK);
+    if (idbData && typeof idbData === 'object') return idbData;
+  } catch(e) {}
+  // 2. Fallback to localStorage
+  try {
+    const raw = localStorage.getItem(SK);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+// ═══════════════════════════════════════════════
+//  FIREBASE — PER-RECORD WRITES (conflict-safe)
+// ═══════════════════════════════════════════════
+function loadFirebaseConfig() {
+  try {
+    const raw = localStorage.getItem(FK);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
+}
+
+function setSyncStatus(status) {
+  const dot = document.getElementById('syncDot');
+  const lbl = document.getElementById('syncLabel');
+  dot.className = 'sync-dot ' + status;
+  if (status === 'synced') lbl.textContent = '☁ Synced';
+  else if (status === 'syncing') lbl.textContent = '↑ Syncing...';
+  else if (status === 'offline') lbl.textContent = '⚠ Offline';
+  else lbl.textContent = 'Local only';
+}
+
+let _suppressCount = 0;
+
+async function initFirebase(config) {
+  if (!window._firebaseReady) {
+    await new Promise(res => window.addEventListener('firebaseReady', res, {once:true}));
+  }
+  const { initializeApp, getDatabase, ref, set, onValue, off } = window._firebase;
+  try {
+    if (fbRef) { try { off(fbRef); } catch(e) {} }
+    fbApp = initializeApp(config, 'agfarmedge-' + Date.now());
+    fbDb = getDatabase(fbApp);
+    fbRef = ref(fbDb, 'agfarmedge/data');
+    fbConfig = config;
+    localStorage.setItem(FK, JSON.stringify(config));
+    isListeningFirebase = true;
+    setSyncStatus('syncing');
+
+    onValue(fbRef, (snapshot) => {
+      if (_suppressCount > 0) return;
+      const val = snapshot.val();
+      if (val && typeof val === 'object') {
+        // Merge per-collection: Firebase wins on conflict
+        const merged = ensureArrays(migrateData(val));
+        data = merged;
+        saveLocal();
+        renderCurrentTab();
+        setSyncStatus('synced');
+      } else if (val === null) {
+        // Empty DB — first device: push all local data
+        pushAllToFirebase();
+      }
+    }, (err) => {
+      setSyncStatus('offline');
+      toast('Firebase error: ' + err.message, true);
+    });
+
+    return true;
+  } catch(e) {
+    toast('Firebase init failed: ' + e.message, true);
+    return false;
+  }
+}
+
+// ── PUSH ALL (first connect / full restore) ────────────────────
+function pushAllToFirebase() {
+  if (!fbRef || !window._firebaseReady) return;
+  const { set } = window._firebase;
+  setSyncStatus('syncing');
+  _suppressCount++;
+  set(fbRef, ensureArrays(data))
+    .then(() => { setSyncStatus('synced'); _suppressCount = Math.max(0, _suppressCount - 1); })
+    .catch(e => {
+      setSyncStatus('offline');
+      _suppressCount = Math.max(0, _suppressCount - 1);
+      toast('Sync failed — changes saved locally', true);
+    });
+}
+
+// ── PER-RECORD WRITE (conflict-safe, atomic) ───────────────────
+// Instead of writing the whole data blob, write only the changed collection.
+// Firebase path: agfarmedge/data/{collection}/{recordId}
+// Deleted records are written with _deleted:true tombstone (safe for multi-device)
+function pushCollectionToFirebase(collection) {
+  if (!fbDb || !window._firebaseReady) return;
+  const { ref, set } = window._firebase;
+  setSyncStatus('syncing');
+  _suppressCount++;
+
+  const records = (data[collection] || []);
+  const collRef = ref(fbDb, `agfarmedge/data/${collection}`);
+
+  // Build a flat object: { recordId: record, ... }
+  const payload = {};
+  records.forEach(r => {
+    payload[String(r.id)] = r;
+  });
+
+  set(collRef, payload)
+    .then(() => {
+      setSyncStatus('synced');
+      _suppressCount = Math.max(0, _suppressCount - 1);
+    })
+    .catch(e => {
+      setSyncStatus('offline');
+      _suppressCount = Math.max(0, _suppressCount - 1);
+      toast('Sync failed — saved locally', true);
+    });
+}
+
+// Called by all save/delete operations — only syncs the affected collection
+function pushToFirebase(collection) {
+  if (!fbRef || !window._firebaseReady) return;
+  if (collection) {
+    pushCollectionToFirebase(collection);
+  } else {
+    pushAllToFirebase();
+  }
+}
+
+window.addEventListener('beforeunload', () => {
+  if (syncTimeout) {
+    clearTimeout(syncTimeout);
+    pushAllToFirebase();
+  }
+});
+
+window.addEventListener('online', () => {
+  if (fbConfig && fbRef) {
+    setSyncStatus('syncing');
+    pushAllToFirebase();
+    toast('Back online — syncing...');
+  } else if (fbConfig && !fbRef) {
+    initFirebase(fbConfig);
+  }
+});
+window.addEventListener('offline', () => setSyncStatus('offline'));
+
+// ── saveData: accepts optional collection for targeted Firebase push ──
+function saveData(collection) {
+  saveLocal();
+  if (fbRef) {
+    clearTimeout(syncTimeout);
+    if (collection) {
+      // Per-record: push only the changed collection after short debounce
+      syncTimeout = setTimeout(() => pushCollectionToFirebase(collection), 600);
+    } else {
+      syncTimeout = setTimeout(() => pushAllToFirebase(), 800);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════════════
+function goTab(tab) {
+  document.getElementById('page-' + currentTab).classList.remove('active');
+  document.getElementById('nav-' + currentTab).classList.remove('active');
+  currentTab = tab;
+  document.getElementById('page-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+  renderCurrentTab();
+}
+
+function renderCurrentTab() {
+  const renderers = {
+    dashboard: renderDashboard,
+    purchases: renderPurchases,
+    sales: renderSales,
+    payments: renderPayments,
+    expenses: renderExpenses,
+    farmers: renderFarmers,
+    traders: renderTraders,
+    reports: renderReports,
+    settings: renderSettings
+  };
+  if (renderers[currentTab]) renderers[currentTab]();
+}
+
+// ═══════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════
+function openModal(html) {
+  document.getElementById('modalBox').innerHTML = html;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// ═══════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard() {
+  const purchases = data.purchases || [];
+  const sales = data.sales || [];
+  const expenses = data.expenses || [];
+  const farmers = data.farmers || [];
+  const traders = data.traders || [];
+  const payments = data.payments || [];
+
+  const tP = purchases.reduce((s,p)=>s+p.totalAmount,0);
+  const tS = sales.reduce((s,p)=>s+p.totalAmount,0);
+  const tE = expenses.reduce((s,e)=>s+e.amount,0);
+  const profit = tS - tP - tE;
+
+  // Unified due calculations (consistent with Reports and Farmers/Traders pages)
+  const totalFarmerDue = farmers.reduce((sum,f)=>{
+    const fps = purchases.filter(p=>p.farmerId===f.id);
+    const tot = fps.reduce((s,p)=>s+p.totalAmount,0);
+    const paid = fps.reduce((s,p)=>s+p.paidAmount,0);
+    const pmts = payments.filter(p=>p.type==='to_farmer'&&p.partyId===f.id).reduce((s,p)=>s+p.amount,0);
+    return sum + Math.max(0, tot - paid - pmts);
+  }, 0);
+
+  const totalTraderDue = traders.reduce((sum,t)=>{
+    const ts = sales.filter(s=>s.traderId===t.id);
+    const tot = ts.reduce((s,x)=>s+x.totalAmount,0);
+    const recv = ts.reduce((s,x)=>s+x.receivedAmount,0);
+    const pmts = payments.filter(p=>p.type==='from_trader'&&p.partyId===t.id).reduce((s,p)=>s+p.amount,0);
+    return sum + Math.max(0, tot - recv - pmts);
+  }, 0);
+
+  const stats = [
+    {label:'Total Purchases', val:fmt(tP), color:C.onion, icon:'🧅', tab:'purchases'},
+    {label:'Total Sales', val:fmt(tS), color:C.cotton, icon:'🏪', tab:'sales'},
+    {label:'Total Expenses', val:fmt(tE), color:C.amber, icon:'💼', tab:'expenses'},
+    {label:'Net Profit / Loss', val:fmt(profit), color:profit>=0?C.profit:C.loss, icon:profit>=0?'📈':'📉', tab:'reports'},
+    {label:'Due to Farmers', val:fmt(totalFarmerDue), color:C.amber, icon:'👨‍🌾', tab:'farmers'},
+    {label:'Due from Traders', val:fmt(totalTraderDue), color:C.purple, icon:'🏬', tab:'traders'},
+  ];
+
+  const recent = [
+    ...purchases.map(p=>({date:p.date, label:'Bought from '+(farmers.find(f=>f.id===p.farmerId)?.name||'—'), amt:p.totalAmount, color:C.onion})),
+    ...sales.map(s=>({date:s.date, label:'Sold to '+(traders.find(t=>t.id===s.traderId)?.name||'—'), amt:s.totalAmount, color:C.cotton}))
+  ].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+
+  document.getElementById('dashContent').innerHTML = `
+    <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:21px;color:var(--white);margin-bottom:2px">Dashboard</div>
+    <div style="font-size:12px;color:var(--dim);margin-bottom:14px">Business overview</div>
+    ${stats.map(s=>`
+    <div class="dash-stat" style="background:${s.color}0d;border-color:${s.color}30" onclick="goTab('${s.tab}')">
+      <div><div class="dash-stat-icon">${s.icon}</div><div class="dash-stat-label">${s.label}</div></div>
+      <div class="dash-stat-val" style="color:${s.color}">${s.val}</div>
+    </div>`).join('')}
+    <div style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;color:var(--white);margin:14px 0 8px">Recent Activity</div>
+    ${recent.length ? recent.map(r=>`
+    <div class="activity-item">
+      <div><div class="activity-label">${esc(r.label)}</div><div class="activity-date">${r.date}</div></div>
+      <div class="activity-amt" style="color:${r.color}">${fmt(r.amt)}</div>
+    </div>`).join('') : '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">No transactions yet</div></div>'}
+    <div style="height:10px"></div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  PURCHASES
+// ═══════════════════════════════════════════════
+let purchaseSearch = '', purchaseFilter = '';
+function renderPurchases() {
+  const all = [...(data.purchases||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const tA = all.reduce((s,p)=>s+p.totalAmount,0);
+  const tP = all.reduce((s,p)=>s+p.paidAmount,0);
+  const tPmts = (data.payments||[]).filter(p=>p.type==='to_farmer').reduce((s,p)=>s+p.amount,0);
+  const tDue = Math.max(0, tA - tP - tPmts);
+  const sorted = all.filter(p=>{
+    const f = (data.farmers||[]).find(x=>x.id===p.farmerId);
+    const q = purchaseSearch.toLowerCase();
+    if (q && !(f?.name||'').toLowerCase().includes(q) && !p.date.includes(q) && !(p.notes||'').toLowerCase().includes(q)) return false;
+    if (purchaseFilter && p.commodity !== purchaseFilter) return false;
+    return true;
+  });
+  document.getElementById('purchasesContent').innerHTML = `
+    <div class="page-hdr"><span class="page-title">🧅 Purchases</span><button class="btn btn-onion btn-sm" onclick="openPurchaseForm()">+ New</button></div>
+    <div class="stat-row-3">
+      <div class="stat-mini"><div class="stat-mini-lbl">Total</div><div class="stat-mini-val" style="color:${C.onion}">${fmt(tA)}</div></div>
+      <div class="stat-mini"><div class="stat-mini-lbl">Paid</div><div class="stat-mini-val" style="color:${C.profit}">${fmt(tP + tPmts)}</div></div>
+      <div class="stat-mini"><div class="stat-mini-lbl">Due</div><div class="stat-mini-val" style="color:${C.amber}">${fmt(tDue)}</div></div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Search farmer, date, notes..." value="${esc(purchaseSearch)}" oninput="purchaseSearch=this.value;renderPurchases()">
+      <div class="filter-chip ${purchaseFilter===''?'active':''}" onclick="purchaseFilter='';renderPurchases()">All</div>
+      <div class="filter-chip ${purchaseFilter==='Onion'?'active':''}" onclick="purchaseFilter='Onion';renderPurchases()">🧅</div>
+      <div class="filter-chip ${purchaseFilter==='Cotton'?'active':''}" onclick="purchaseFilter='Cotton';renderPurchases()">🌿</div>
+    </div>
+    ${sorted.length ? sorted.map(p=>{
+      const f = (data.farmers||[]).find(x=>x.id===p.farmerId);
+      const due = p.totalAmount - p.paidAmount;
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--white)">${esc(f?.name||'—')}</div>
+            <div class="txn-meta">${p.date} &nbsp;${badge(p.commodity, COMM_COLOR[p.commodity])}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-xs" onclick="openPurchaseForm(${p.id})">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delPurchase(${p.id})">✕</button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div class="txn-weight">${p.bags} bags · ${p.weightKg} kg @ ₹${p.ratePerKg}/kg</div>
+          <div style="text-align:right">
+            <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:14px;color:var(--white)">${fmt(p.totalAmount)}</div>
+            <div style="font-size:11px;font-weight:700;color:${due>0?C.amber:C.profit}">Due: ${fmt(due)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty-state"><div class="empty-icon">🧅</div><div class="empty-text">${purchaseSearch||purchaseFilter?'No matching purchases':'No purchases yet'}</div></div>`}
+    <div style="height:10px"></div>`;
+}
+
+function openPurchaseForm(id) {
+  const p = id ? (data.purchases||[]).find(x=>x.id===id) : null;
+  const fOpts = (data.farmers||[]).map(f=>`<option value="${f.id}" ${p&&p.farmerId===f.id?'selected':''}>${esc(f.name)} (${esc(f.village)})</option>`).join('');
+  openModal(`
+    <div class="modal-hdr"><span class="modal-title">${p?'Edit Purchase':'New Purchase'}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Farmer *</label><select id="pF"><option value="">— Select Farmer —</option>${fOpts}</select></div>
+    <div class="field"><label>Date *</label><input type="date" id="pD" value="${p?p.date:today()}" max="${today()}"></div>
+    <div class="field"><label>Commodity</label><select id="pC"><option ${!p||p.commodity==='Onion'?'selected':''}>Onion</option><option ${p&&p.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
+    <div class="field-row col3">
+      <div class="field"><label>Bags</label><input type="number" id="pB" value="${p?p.bags:''}" placeholder="50" min="0"></div>
+      <div class="field"><label>Weight kg *</label><input type="number" id="pW" value="${p?p.weightKg:''}" placeholder="2500" min="0" oninput="calcPTotal()"></div>
+      <div class="field"><label>Rate/kg *</label><input type="number" id="pR" value="${p?p.ratePerKg:''}" placeholder="18" min="0" step="0.5" oninput="calcPTotal()"></div>
+    </div>
+    <div class="total-preview"><div class="total-preview-lbl">Total Amount</div><div class="total-preview-val" id="pTotal" style="color:${C.onion}">${p?fmt(p.totalAmount):'₹0'}</div></div>
+    <div class="field"><label>Amount Paid (₹)</label><input type="number" id="pPaid" value="${p?p.paidAmount:''}" placeholder="0" min="0"></div>
+    <div class="field"><label>Notes</label><textarea id="pNotes">${p?esc(p.notes):''}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-onion" onclick="savePurchase(${id||0})">Save Purchase</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function calcPTotal() {
+  const w = parseFloat(document.getElementById('pW').value)||0;
+  const r = parseFloat(document.getElementById('pR').value)||0;
+  document.getElementById('pTotal').textContent = fmt(w*r);
+}
+
+function savePurchase(id) {
+  const fId = parseInt(document.getElementById('pF').value);
+  const wt = parseFloat(document.getElementById('pW').value);
+  const rate = parseFloat(document.getElementById('pR').value);
+  const dateVal = document.getElementById('pD').value;
+  if (!fId || isNaN(fId)) return toast('Please select a farmer', true);
+  if (!dateVal) return toast('Date is required', true);
+  if (!wt || wt <= 0) return toast('Weight must be greater than 0', true);
+  if (!rate || rate <= 0) return toast('Rate must be greater than 0', true);
+  const bags = parseInt(document.getElementById('pB').value)||0;
+  if (bags <= 0) return toast('Number of bags must be greater than 0', true);
+  const total = wt * rate;
+  const rawPaid = parseFloat(document.getElementById('pPaid').value)||0;
+  const paid = Math.min(rawPaid, total);
+  if (rawPaid > total) toast('Paid amount capped to total ₹' + total.toLocaleString('en-IN'), true);
+  const rec = {
+    farmerId:fId, date:dateVal,
+    commodity:document.getElementById('pC').value,
+    bags:bags,
+    weightKg:wt, ratePerKg:rate, totalAmount:total,
+    paidAmount:paid,
+    notes:document.getElementById('pNotes').value
+  };
+  data.purchases = ensureArrays(data).purchases;
+  if (id) data.purchases = data.purchases.map(x=>x.id===id?{...rec,id}:x);
+  else data.purchases.push({...rec, id:uid()});
+  saveData('purchases'); closeModal(); renderPurchases(); toast('Purchase saved \u2713');
+}
+
+function delPurchase(id) {
+  confirmDialog('Delete this purchase? This cannot be undone.', () => {
+    data.purchases = (data.purchases||[]).filter(x=>x.id!==id);
+    saveData('purchases'); renderPurchases(); toast('Deleted');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  SALES
+// ═══════════════════════════════════════════════
+let saleSearch = '', saleFilter = '';
+function renderSales() {
+  const all = [...(data.sales||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const tA = all.reduce((s,x)=>s+x.totalAmount,0);
+  const tR = all.reduce((s,x)=>s+x.receivedAmount,0);
+  const tPmts = (data.payments||[]).filter(p=>p.type==='from_trader').reduce((s,p)=>s+p.amount,0);
+  const tPending = Math.max(0, tA - tR - tPmts);
+  const sorted = all.filter(s=>{
+    const t = (data.traders||[]).find(x=>x.id===s.traderId);
+    const q = saleSearch.toLowerCase();
+    if (q && !(t?.name||'').toLowerCase().includes(q) && !s.date.includes(q) && !(s.notes||'').toLowerCase().includes(q)) return false;
+    if (saleFilter && s.commodity !== saleFilter) return false;
+    return true;
+  });
+  document.getElementById('salesContent').innerHTML = `
+    <div class="page-hdr"><span class="page-title">🏪 Sales</span><button class="btn btn-cotton btn-sm" onclick="openSaleForm()">+ New</button></div>
+    <div class="stat-row-3">
+      <div class="stat-mini"><div class="stat-mini-lbl">Total</div><div class="stat-mini-val" style="color:${C.cotton}">${fmt(tA)}</div></div>
+      <div class="stat-mini"><div class="stat-mini-lbl">Received</div><div class="stat-mini-val" style="color:${C.profit}">${fmt(tR + tPmts)}</div></div>
+      <div class="stat-mini"><div class="stat-mini-lbl">Pending</div><div class="stat-mini-val" style="color:${C.purple}">${fmt(tPending)}</div></div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Search trader, date, notes..." value="${esc(saleSearch)}" oninput="saleSearch=this.value;renderSales()">
+      <div class="filter-chip ${saleFilter===''?'active':''}" onclick="saleFilter='';renderSales()">All</div>
+      <div class="filter-chip ${saleFilter==='Onion'?'active':''}" onclick="saleFilter='Onion';renderSales()">🧅</div>
+      <div class="filter-chip ${saleFilter==='Cotton'?'active':''}" onclick="saleFilter='Cotton';renderSales()">🌿</div>
+    </div>
+    ${sorted.length ? sorted.map(s=>{
+      const t = (data.traders||[]).find(x=>x.id===s.traderId);
+      const due = s.totalAmount - s.receivedAmount;
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--white)">${esc(t?.name||'—')}</div>
+            <div class="txn-meta">${s.date} · ${esc(t?.city||'')} &nbsp;${badge(s.commodity, COMM_COLOR[s.commodity])}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-xs" onclick="openSaleForm(${s.id})">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delSale(${s.id})">✕</button>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end">
+          <div class="txn-weight">${s.bags} bags · ${s.weightKg} kg @ ₹${s.ratePerKg}/kg</div>
+          <div style="text-align:right">
+            <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:14px;color:var(--white)">${fmt(s.totalAmount)}</div>
+            <div style="font-size:11px;font-weight:700;color:${due>0?C.purple:C.profit}">Due: ${fmt(due)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty-state"><div class="empty-icon">🏪</div><div class="empty-text">${saleSearch||saleFilter?'No matching sales':'No sales yet'}</div></div>`}
+    <div style="height:10px"></div>`;
+}
+
+function openSaleForm(id) {
+  const s = id ? (data.sales||[]).find(x=>x.id===id) : null;
+  const tOpts = (data.traders||[]).map(t=>`<option value="${t.id}" ${s&&s.traderId===t.id?'selected':''}>${esc(t.name)} (${esc(t.city)})</option>`).join('');
+  openModal(`
+    <div class="modal-hdr"><span class="modal-title">${s?'Edit Sale':'New Sale'}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Trader *</label><select id="sT"><option value="">— Select Trader —</option>${tOpts}</select></div>
+    <div class="field"><label>Date *</label><input type="date" id="sD" value="${s?s.date:today()}" max="${today()}"></div>
+    <div class="field"><label>Commodity</label><select id="sC"><option ${!s||s.commodity==='Onion'?'selected':''}>Onion</option><option ${s&&s.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
+    <div class="field-row col3">
+      <div class="field"><label>Bags</label><input type="number" id="sB" value="${s?s.bags:''}" placeholder="50" min="0"></div>
+      <div class="field"><label>Weight kg *</label><input type="number" id="sW" value="${s?s.weightKg:''}" placeholder="2500" min="0" oninput="calcSTotal()"></div>
+      <div class="field"><label>Rate/kg *</label><input type="number" id="sR" value="${s?s.ratePerKg:''}" placeholder="22" min="0" step="0.5" oninput="calcSTotal()"></div>
+    </div>
+    <div class="total-preview"><div class="total-preview-lbl">Total Amount</div><div class="total-preview-val" id="sTotal" style="color:${C.cotton}">${s?fmt(s.totalAmount):'₹0'}</div></div>
+    <div class="field"><label>Amount Received (₹)</label><input type="number" id="sRecv" value="${s?s.receivedAmount:''}" placeholder="0" min="0"></div>
+    <div class="field"><label>Notes</label><textarea id="sNotes">${s?esc(s.notes):''}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-cotton" onclick="saveSale(${id||0})">Save Sale</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function calcSTotal() {
+  const w = parseFloat(document.getElementById('sW').value)||0;
+  const r = parseFloat(document.getElementById('sR').value)||0;
+  document.getElementById('sTotal').textContent = fmt(w*r);
+}
+
+function saveSale(id) {
+  const tId = parseInt(document.getElementById('sT').value);
+  const wt = parseFloat(document.getElementById('sW').value);
+  const rate = parseFloat(document.getElementById('sR').value);
+  const dateVal = document.getElementById('sD').value;
+  if (!tId || isNaN(tId)) return toast('Please select a trader', true);
+  if (!dateVal) return toast('Date is required', true);
+  if (!wt || wt <= 0) return toast('Weight must be greater than 0', true);
+  if (!rate || rate <= 0) return toast('Rate must be greater than 0', true);
+  const sBags = parseInt(document.getElementById('sB').value)||0;
+  if (sBags <= 0) return toast('Number of bags must be greater than 0', true);
+  const total = wt * rate;
+  const rawRecv = parseFloat(document.getElementById('sRecv').value)||0;
+  const recv = Math.min(rawRecv, total);
+  if (rawRecv > total) toast('Received amount capped to total ₹' + total.toLocaleString('en-IN'), true);
+  const rec = {
+    traderId:tId, date:dateVal,
+    commodity:document.getElementById('sC').value,
+    bags:sBags,
+    weightKg:wt, ratePerKg:rate, totalAmount:total,
+    receivedAmount:recv,
+    notes:document.getElementById('sNotes').value
+  };
+  data.sales = ensureArrays(data).sales;
+  if (id) data.sales = data.sales.map(x=>x.id===id?{...rec,id}:x);
+  else data.sales.push({...rec, id:uid()});
+  saveData('sales'); closeModal(); renderSales(); toast('Sale saved ✓');
+}
+
+function delSale(id) {
+  confirmDialog('Delete this sale? This cannot be undone.', () => {
+    data.sales = (data.sales||[]).filter(x=>x.id!==id);
+    saveData('sales'); renderSales(); toast('Deleted');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  PAYMENTS
+// ═══════════════════════════════════════════════
+function renderPayments() {
+  const sorted = [...(data.payments||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('paymentsContent').innerHTML = `
+    <div class="page-hdr"><span class="page-title">💳 Payments</span><button class="btn btn-profit btn-sm" onclick="openPaymentForm()">+ Record</button></div>
+    ${sorted.length ? sorted.map(p=>{
+      const isF = p.type==='to_farmer';
+      const party = isF ? (data.farmers||[]).find(x=>x.id===p.partyId) : (data.traders||[]).find(x=>x.id===p.partyId);
+      return `<div class="card" style="display:flex;justify-content:space-between;align-items:center">
+        <div style="flex:1">
+          ${badge(isF?'To Farmer':'From Trader', isF?C.amber:C.profit)}
+          <div style="font-weight:700;font-size:13px;color:var(--white);margin-top:5px">${esc(party?.name||'—')}</div>
+          <div class="txn-meta">${p.date} · ${esc(p.mode)}</div>
+          ${p.note?`<div style="font-size:11px;color:var(--faint);margin-top:2px">${esc(p.note)}</div>`:''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
+          <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${isF?C.amber:C.profit}">${fmt(p.amount)}</div>
+          <div style="display:flex;gap:5px">
+            <button class="btn btn-ghost btn-xs" onclick="openPaymentForm(${p.id})">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delPayment(${p.id})">✕</button>
+          </div>
+        </div>
+      </div>`;
+    }).join('') : '<div class="empty-state"><div class="empty-icon">💳</div><div class="empty-text">No payments recorded</div></div>'}
+    <div style="height:10px"></div>`;
+}
+
+function openPaymentForm(id) {
+  const p = id ? (data.payments||[]).find(x=>x.id===id) : null;
+  openModal(`
+    <div class="modal-hdr"><span class="modal-title">${p?'Edit Payment':'Record Payment'}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Payment Type</label>
+      <select id="pyType" onchange="refreshPayParties(${p?p.partyId:0})">
+        <option value="to_farmer" ${!p||p.type==='to_farmer'?'selected':''}>💸 Payment TO Farmer</option>
+        <option value="from_trader" ${p&&p.type==='from_trader'?'selected':''}>💰 Payment FROM Trader</option>
+      </select>
+    </div>
+    <div class="field"><label id="pyPartyLbl">${!p||p.type==='to_farmer'?'Farmer':'Trader'} *</label><select id="pyParty"><option value="">— Select —</option></select></div>
+    <div class="field"><label>Date *</label><input type="date" id="pyDate" value="${p?p.date:today()}" max="${today()}"></div>
+    <div class="field"><label>Amount (₹) *</label><input type="number" id="pyAmt" value="${p?p.amount:''}" placeholder="10000" min="0"></div>
+    <div class="field"><label>Mode</label><select id="pyMode">${PAY_MODES.map(m=>`<option ${p&&p.mode===m?'selected':''}>${m}</option>`).join('')}</select></div>
+    <div class="field"><label>Note / Reference</label><input type="text" id="pyNote" value="${p?esc(p.note||''):''}" placeholder="NEFT ref, cheque no..."></div>
+    <div class="btn-row">
+      <button class="btn btn-profit" onclick="savePayment(${id||0})">${p?'Update Payment':'Save Payment'}</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+  refreshPayParties(p?p.partyId:0);
+}
+
+function refreshPayParties(selectedId) {
+  const type = document.getElementById('pyType').value;
+  const list = type==='to_farmer' ? (data.farmers||[]) : (data.traders||[]);
+  document.getElementById('pyPartyLbl').textContent = type==='to_farmer' ? 'Farmer *' : 'Trader *';
+  document.getElementById('pyParty').innerHTML = '<option value="">— Select —</option>' +
+    list.map(x=>`<option value="${x.id}" ${x.id===selectedId?'selected':''}>${esc(x.name)}</option>`).join('');
+}
+
+function savePayment(id) {
+  const pId = parseInt(document.getElementById('pyParty').value);
+  const amt = parseFloat(document.getElementById('pyAmt').value);
+  const pyDate = document.getElementById('pyDate').value;
+  if (!pId || isNaN(pId)) return toast('Please select a party', true);
+  if (!pyDate) return toast('Date is required', true);
+  if (!amt || amt<=0) return toast('Enter a valid amount', true);
+  data.payments = ensureArrays(data).payments;
+  const rec = {
+    type:document.getElementById('pyType').value, partyId:pId,
+    date:pyDate, amount:amt,
+    mode:document.getElementById('pyMode').value,
+    note:document.getElementById('pyNote').value
+  };
+  if (id) data.payments = data.payments.map(x=>x.id===id?{...rec,id}:x);
+  else data.payments.push({...rec, id:uid()});
+  saveData('payments'); closeModal(); renderPayments(); toast(id?'Payment updated ✓':'Payment recorded ✓');
+}
+
+function delPayment(id) {
+  confirmDialog('Delete this payment? This cannot be undone.', () => {
+    data.payments = (data.payments||[]).filter(x=>x.id!==id);
+    saveData('payments'); renderPayments(); toast('Deleted');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  EXPENSES
+// ═══════════════════════════════════════════════
+let expSearch = '';
+function renderExpenses() {
+  const sorted = [...(data.expenses||[])].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const tot = sorted.reduce((s,e)=>s+e.amount,0);
+  const catColors = {Transport:C.cotton, Labour:C.profit, Packaging:C.amber, Other:C.purple};
+  const filtered = sorted.filter(e=>
+    !expSearch ||
+    e.category.toLowerCase().includes(expSearch) ||
+    e.subCategory.toLowerCase().includes(expSearch) ||
+    (e.vendor||'').toLowerCase().includes(expSearch) ||
+    (e.notes||'').toLowerCase().includes(expSearch)
+  );
+  document.getElementById('expensesContent').innerHTML = `
+    <div class="page-hdr"><span class="page-title">💼 Expenses</span><button class="btn btn-amber btn-sm" onclick="openExpenseForm()">+ Add</button></div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:10px;color:var(--dim)">Total Expenses</div>
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:22px;color:${C.loss}">${fmt(tot)}</div>
+    </div>
+    <div class="search-bar">
+      <input class="search-input" placeholder="🔍 Search expenses..." value="${esc(expSearch)}" oninput="expSearch=this.value.toLowerCase();renderExpenses()">
+    </div>
+    ${filtered.length ? filtered.map(e=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center">
+      <div style="flex:1">
+        ${badge(e.category, catColors[e.category]||C.dim)}
+        <div style="font-weight:700;font-size:12px;color:var(--white);margin-top:5px">${esc(e.subCategory)}</div>
+        <div class="txn-meta">${e.date}${e.vendor?' · '+esc(e.vendor):''}</div>
+        ${e.notes?`<div style="font-size:10px;color:var(--faint);margin-top:2px">${esc(e.notes)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
+        <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:14px;color:${C.amber}">${fmt(e.amount)}</div>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-ghost btn-xs" onclick="openExpenseForm(${e.id})">Edit</button>
+          <button class="btn btn-danger btn-xs" onclick="delExpense(${e.id})">✕</button>
+        </div>
+      </div>
+    </div>`).join('') : `<div class="empty-state"><div class="empty-icon">💼</div><div class="empty-text">${expSearch?'No matching expenses':'No expenses recorded'}</div></div>`}
+    <div style="height:10px"></div>`;
+}
+
+function openExpenseForm(id) {
+  const e = id ? (data.expenses||[]).find(x=>x.id===id) : null;
+  const cats = Object.keys(EXP_CATS);
+  const defCat = e ? e.category : cats[0];
+  openModal(`
+    <div class="modal-hdr"><span class="modal-title">${e?'Edit Expense':'Add Expense'}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Date *</label><input type="date" id="eDate" value="${e?e.date:today()}" max="${today()}"></div>
+    <div class="field"><label>Commodity</label><select id="eComm"><option ${!e||e.commodity==='Onion'?'selected':''}>Onion</option><option ${e&&e.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
+    <div class="field"><label>Category *</label><select id="eCat" onchange="refreshExpSub('${e?e.subCategory:''}')">${cats.map(c=>`<option ${c===defCat?'selected':''}>${c}</option>`).join('')}</select></div>
+    <div class="field"><label>Sub-Category</label><select id="eSub">${EXP_CATS[defCat].map(s=>`<option ${e&&s===e.subCategory?'selected':''}>${s}</option>`).join('')}</select></div>
+    <div class="field"><label>Amount (₹) *</label><input type="number" id="eAmt" value="${e?e.amount:''}" placeholder="5000" min="0"></div>
+    <div class="field"><label>Vendor / Party</label><input type="text" id="eVendor" value="${e?esc(e.vendor||''):''}" placeholder="Raju Transport"></div>
+    <div class="field"><label>Notes</label><textarea id="eNotes" placeholder="Optional details...">${e?esc(e.notes||''):''}</textarea></div>
+    <div class="btn-row">
+      <button class="btn btn-amber" onclick="saveExpense(${id||0})">${e?'Update Expense':'Save Expense'}</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function refreshExpSub(selectedSub) {
+  const cat = document.getElementById('eCat').value;
+  document.getElementById('eSub').innerHTML = EXP_CATS[cat].map(s=>`<option ${s===selectedSub?'selected':''}>${s}</option>`).join('');
+}
+
+function saveExpense(id) {
+  const eDateVal = document.getElementById('eDate').value;
+  const amt = parseFloat(document.getElementById('eAmt').value);
+  if (!eDateVal) return toast('Date is required', true);
+  if (!amt || amt<=0) return toast('Enter a valid amount', true);
+  const rec = {
+    date:eDateVal,
+    category:document.getElementById('eCat').value,
+    subCategory:document.getElementById('eSub').value,
+    amount:amt, vendor:document.getElementById('eVendor').value,
+    commodity:document.getElementById('eComm').value,
+    notes:document.getElementById('eNotes').value
+  };
+  data.expenses = ensureArrays(data).expenses;
+  if (id) data.expenses = data.expenses.map(x=>x.id===id?{...rec,id}:x);
+  else data.expenses.push({...rec, id:uid()});
+  saveData('expenses'); closeModal(); renderExpenses(); toast(id?'Expense updated ✓':'Expense saved ✓');
+}
+
+function delExpense(id) {
+  confirmDialog('Delete this expense? This cannot be undone.', () => {
+    data.expenses = (data.expenses||[]).filter(x=>x.id!==id);
+    saveData('expenses'); renderExpenses(); toast('Deleted');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  FARMERS
+// ═══════════════════════════════════════════════
+let farmerSearch = '';
+function renderFarmers() {
+  const allFarmers = data.farmers||[];
+  const filtered = allFarmers.filter(f=>{
+    const q = farmerSearch.toLowerCase();
+    return !q || f.name.toLowerCase().includes(q) || (f.village||'').toLowerCase().includes(q) || (f.phone||'').includes(q);
+  });
+  document.getElementById('farmersContent').innerHTML = `
+    <div class="page-hdr"><span class="page-title">👨‍🌾 Farmers</span><button class="btn btn-onion btn-sm" onclick="openFarmerForm()">+ Add</button></div>
+    <div class="search-bar" style="margin-bottom:10px">
+      <input class="search-input" placeholder="🔍 Search name, village, phone..." value="${esc(farmerSearch)}" oninput="farmerSearch=this.value;renderFarmers()">
+    </div>
+    ${filtered.length ? filtered.map(f=>{
+      const fps = (data.purchases||[]).filter(p=>p.farmerId===f.id);
+      const tot = fps.reduce((s,p)=>s+p.totalAmount,0);
+      const paid = fps.reduce((s,p)=>s+p.paidAmount,0);
+      const pmts = (data.payments||[]).filter(p=>p.type==='to_farmer'&&p.partyId===f.id).reduce((s,p)=>s+p.amount,0);
+      const due = Math.max(0, tot - paid - pmts);
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:14px;color:var(--white)">${esc(f.name)}</div>
+            <div class="txn-meta" style="margin-top:3px">📍 ${esc(f.village)} &nbsp;📞 ${esc(f.phone)}</div>
+            <div style="margin-top:7px">${badge(f.commodity, COMM_COLOR[f.commodity])}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-xs" onclick="openFarmerForm(${f.id})">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delFarmer(${f.id})">Del</button>
+          </div>
+        </div>
+        <div class="party-card-stats">
+          <div><div class="party-stat-lbl">Business</div><div class="party-stat-val">${fmt(tot)}</div></div>
+          <div><div class="party-stat-lbl">Paid</div><div class="party-stat-val" style="color:${C.profit}">${fmt(paid)}</div></div>
+          <div><div class="party-stat-lbl">Due</div><div class="party-stat-val" style="color:${due>0?C.amber:C.profit}">${fmt(due)}</div></div>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty-state"><div class="empty-icon">👨‍🌾</div><div class="empty-text">${farmerSearch?'No matching farmers':'No farmers added yet'}</div></div>`}
+    <div style="height:10px"></div>`;
+}
+
+function openFarmerForm(id) {
+  const f = id ? (data.farmers||[]).find(x=>x.id===id) : null;
+  openModal(`
+    <div class="modal-hdr"><span class="modal-title">${f?'Edit Farmer':'Add Farmer'}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Full Name *</label><input type="text" id="fName" value="${f?esc(f.name):''}" placeholder="Ramesh Patil"></div>
+    <div class="field"><label>Village / Town *</label><input type="text" id="fVillage" value="${f?esc(f.village):''}" placeholder="Nashik"></div>
+    <div class="field"><label>Phone Number</label><input type="tel" id="fPhone" value="${f?esc(f.phone):''}" placeholder="9876543210"></div>
+    <div class="field"><label>Commodity</label><select id="fComm"><option ${!f||f.commodity==='Onion'?'selected':''}>Onion</option><option ${f&&f.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
+    <div class="btn-row">
+      <button class="btn btn-onion" onclick="saveFarmer(${id||0})">Save Farmer</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function saveFarmer(id) {
+  const name = document.getElementById('fName').value.trim();
+  const village = document.getElementById('fVillage').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  if (!name) return toast('Farmer name is required', true);
+  if (!village) return toast('Village is required', true);
+  if (phone && !/^\d{10}$/.test(phone)) return toast('Phone must be a 10-digit number', true);
+  const rec = {name, village, phone, commodity:document.getElementById('fComm').value};
+  data.farmers = ensureArrays(data).farmers;
+  if (id) data.farmers = data.farmers.map(x=>x.id===id?{...x,...rec}:x);
+  else data.farmers.push({...rec, id:uid()});
+  saveData('farmers'); closeModal(); renderFarmers(); toast('Farmer saved ✓');
+}
+
+function delFarmer(id) {
+  const linkedPurchases = (data.purchases||[]).filter(p=>p.farmerId===id).length;
+  const msg = linkedPurchases > 0
+    ? `This farmer has ${linkedPurchases} purchase record(s) linked to them. Their name will show as "—" in those records. Delete anyway?`
+    : 'Delete this farmer?';
+  confirmDialog(msg, () => {
+    data.farmers = (data.farmers||[]).filter(x=>x.id!==id);
+    saveData('farmers'); renderFarmers(); toast('Deleted');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  TRADERS
+// ═══════════════════════════════════════════════
+let traderSearch = '';
+function renderTraders() {
+  const allTraders = data.traders||[];
+  const filtered = allTraders.filter(t=>{
+    const q = traderSearch.toLowerCase();
+    return !q || t.name.toLowerCase().includes(q) || (t.city||'').toLowerCase().includes(q) || (t.phone||'').includes(q);
+  });
+  document.getElementById('tradersContent').innerHTML = `
+    <div class="page-hdr"><span class="page-title">🏬 Traders</span><button class="btn btn-cotton btn-sm" onclick="openTraderForm()">+ Add</button></div>
+    <div class="search-bar" style="margin-bottom:10px">
+      <input class="search-input" placeholder="🔍 Search name, city, phone..." value="${esc(traderSearch)}" oninput="traderSearch=this.value;renderTraders()">
+    </div>
+    ${filtered.length ? filtered.map(t=>{
+      const ts = (data.sales||[]).filter(s=>s.traderId===t.id);
+      const tot = ts.reduce((s,x)=>s+x.totalAmount,0);
+      const recv = ts.reduce((s,x)=>s+x.receivedAmount,0);
+      const pmts = (data.payments||[]).filter(p=>p.type==='from_trader'&&p.partyId===t.id).reduce((s,p)=>s+p.amount,0);
+      const due = Math.max(0, tot - recv - pmts);
+      return `<div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:14px;color:var(--white)">${esc(t.name)}</div>
+            <div class="txn-meta" style="margin-top:3px">📍 ${esc(t.city)} &nbsp;📞 ${esc(t.phone)}</div>
+            <div style="margin-top:7px">${badge(t.commodity, COMM_COLOR[t.commodity])}</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <button class="btn btn-ghost btn-xs" onclick="openTraderForm(${t.id})">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delTrader(${t.id})">Del</button>
+          </div>
+        </div>
+        <div class="party-card-stats">
+          <div><div class="party-stat-lbl">Business</div><div class="party-stat-val">${fmt(tot)}</div></div>
+          <div><div class="party-stat-lbl">Received</div><div class="party-stat-val" style="color:${C.profit}">${fmt(recv)}</div></div>
+          <div><div class="party-stat-lbl">Receivable</div><div class="party-stat-val" style="color:${due>0?C.purple:C.profit}">${fmt(due)}</div></div>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty-state"><div class="empty-icon">🏬</div><div class="empty-text">${traderSearch?'No matching traders':'No traders added yet'}</div></div>`}
+    <div style="height:10px"></div>`;
+}
+
+function openTraderForm(id) {
+  const t = id ? (data.traders||[]).find(x=>x.id===id) : null;
+  openModal(`
+    <div class="modal-hdr"><span class="modal-title">${t?'Edit Trader':'Add Trader'}</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="field"><label>Firm / Trader Name *</label><input type="text" id="tName" value="${t?esc(t.name):''}" placeholder="Sharma Traders"></div>
+    <div class="field"><label>City (Mandi)</label><input type="text" id="tCity" value="${t?esc(t.city):''}" placeholder="Delhi"></div>
+    <div class="field"><label>Phone Number</label><input type="tel" id="tPhone" value="${t?esc(t.phone):''}" placeholder="9911223344"></div>
+    <div class="field"><label>Commodity</label><select id="tComm"><option ${!t||t.commodity==='Onion'?'selected':''}>Onion</option><option ${t&&t.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
+    <div class="btn-row">
+      <button class="btn btn-cotton" onclick="saveTrader(${id||0})">Save Trader</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>`);
+}
+
+function saveTrader(id) {
+  const name = document.getElementById('tName').value.trim();
+  const tPhone = document.getElementById('tPhone').value.trim();
+  if (!name) return toast('Trader name is required', true);
+  if (tPhone && !/^\d{10}$/.test(tPhone)) return toast('Phone must be a 10-digit number', true);
+  const rec = {name, city:document.getElementById('tCity').value.trim(), phone:tPhone, commodity:document.getElementById('tComm').value};
+  data.traders = ensureArrays(data).traders;
+  if (id) data.traders = data.traders.map(x=>x.id===id?{...x,...rec}:x);
+  else data.traders.push({...rec, id:uid()});
+  saveData('traders'); closeModal(); renderTraders(); toast('Trader saved ✓');
+}
+
+function delTrader(id) {
+  const linkedSales = (data.sales||[]).filter(s=>s.traderId===id).length;
+  const msg = linkedSales > 0
+    ? `This trader has ${linkedSales} sale record(s) linked to them. Their name will show as "—" in those records. Delete anyway?`
+    : 'Delete this trader?';
+  confirmDialog(msg, () => {
+    data.traders = (data.traders||[]).filter(x=>x.id!==id);
+    saveData('traders'); renderTraders(); toast('Deleted');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  REPORTS
+// ═══════════════════════════════════════════════
+let reportTab = 'pl';
+let reportFrom = '';
+let reportTo = '';
+
+function renderReports() {
+  const purchases = data.purchases || [];
+  const sales     = data.sales     || [];
+  const expenses  = data.expenses  || [];
+  const payments  = data.payments  || [];
+  const farmers   = data.farmers   || [];
+  const traders   = data.traders   || [];
+
+  // date filter
+  const inRange = date => {
+    if (reportFrom && date < reportFrom) return false;
+    if (reportTo   && date > reportTo)   return false;
+    return true;
+  };
+  const fP = purchases.filter(x=>inRange(x.date));
+  const fS = sales.filter(x=>inRange(x.date));
+  const fE = expenses.filter(x=>inRange(x.date));
+
+  const tP = fP.reduce((s,p)=>s+p.totalAmount,0);
+  const tS = fS.reduce((s,p)=>s+p.totalAmount,0);
+  const tE = fE.reduce((s,e)=>s+e.amount,0);
+  const profit = tS - tP - tE;
+  const margin = tS > 0 ? ((profit/tS)*100).toFixed(1) : '0.0';
+
+  // commodity breakdown
+  const onionP = fP.filter(x=>x.commodity==='Onion').reduce((s,x)=>s+x.totalAmount,0);
+  const cottonP = fP.filter(x=>x.commodity==='Cotton').reduce((s,x)=>s+x.totalAmount,0);
+  const onionS = fS.filter(x=>x.commodity==='Onion').reduce((s,x)=>s+x.totalAmount,0);
+  const cottonS = fS.filter(x=>x.commodity==='Cotton').reduce((s,x)=>s+x.totalAmount,0);
+  const onionE = fE.filter(x=>x.commodity==='Onion').reduce((s,x)=>s+x.amount,0);
+  const cottonE = fE.filter(x=>x.commodity==='Cotton').reduce((s,x)=>s+x.amount,0);
+  const onionProfit = onionS - onionP - onionE;
+  const cottonProfit = cottonS - cottonP - cottonE;
+
+  // expense by category
+  const catColors = {Transport:C.cotton, Labour:C.profit, Packaging:C.amber, Other:C.purple};
+  const catTotals = {};
+  fE.forEach(e=>{ catTotals[e.category]=(catTotals[e.category]||0)+e.amount; });
+  const catMax = Math.max(...Object.values(catTotals), 1);
+
+  // dues (all-time, not date-filtered — dues are current outstanding)
+  const fDues = farmers.map(f=>{
+    const fps = purchases.filter(p=>p.farmerId===f.id);
+    const tot = fps.reduce((s,p)=>s+p.totalAmount,0);
+    const paid = fps.reduce((s,p)=>s+p.paidAmount,0);
+    const pmts = payments.filter(p=>p.type==='to_farmer'&&p.partyId===f.id).reduce((s,p)=>s+p.amount,0);
+    return {name:f.name, village:f.village, due:tot-paid-pmts};
+  }).filter(x=>x.due>0).sort((a,b)=>b.due-a.due);
+
+  const tDues = traders.map(t=>{
+    const ts = sales.filter(s=>s.traderId===t.id);
+    const tot = ts.reduce((s,x)=>s+x.totalAmount,0);
+    const recv = ts.reduce((s,x)=>s+x.receivedAmount,0);
+    const pmts = payments.filter(p=>p.type==='from_trader'&&p.partyId===t.id).reduce((s,p)=>s+p.amount,0);
+    return {name:t.name, city:t.city, due:tot-recv-pmts};
+  }).filter(x=>x.due>0).sort((a,b)=>b.due-a.due);
+
+  const tabBtn = (id,label) => `<div class="report-tab ${reportTab===id?'active':''}" onclick="reportTab='${id}';renderReports()">${label}</div>`;
+
+  const plHtml = `
+    <div class="card" style="border-color:${C.cotton}30;margin-bottom:10px">
+      <div style="font-weight:700;font-size:13px;color:var(--white);margin-bottom:10px">📊 Overall P&amp;L</div>
+      <div class="pl-row"><span style="color:var(--dim)">Revenue (Sales)</span><span style="color:${C.cotton};font-weight:700">${fmt(tS)}</span></div>
+      <div class="pl-row"><span style="color:var(--dim)">Cost (Purchases)</span><span style="color:${C.onion};font-weight:700">${fmt(tP)}</span></div>
+      <div class="pl-row"><span style="color:var(--dim)">Expenses</span><span style="color:${C.amber};font-weight:700">${fmt(tE)}</span></div>
+      <div class="pl-row" style="border-bottom:none"><span style="color:var(--dim)">Profit Margin</span><span style="color:${profit>=0?C.profit:C.loss};font-weight:700">${margin}%</span></div>
+      <div class="pl-total" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <span class="pl-total-lbl">Net ${profit>=0?'Profit':'Loss'}</span>
+        <span class="pl-total-val" style="color:${profit>=0?C.profit:C.loss}">${fmt(Math.abs(profit))}</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+      <div class="card" style="border-color:${C.onion}30">
+        <div style="font-size:10px;color:${C.onion};font-weight:700;margin-bottom:6px">🧅 ONION</div>
+        <div class="pl-row" style="padding:4px 0"><span style="color:var(--dim);font-size:11px">Sales</span><span style="font-size:11px;font-weight:700;color:${C.cotton}">${fmt(onionS)}</span></div>
+        <div class="pl-row" style="padding:4px 0"><span style="color:var(--dim);font-size:11px">Purchases</span><span style="font-size:11px;font-weight:700;color:${C.onion}">${fmt(onionP)}</span></div>
+        <div class="pl-row" style="padding:4px 0;border:none"><span style="color:var(--dim);font-size:11px">Expenses</span><span style="font-size:11px;font-weight:700;color:${C.amber}">${fmt(onionE)}</span></div>
+        <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${onionProfit>=0?C.profit:C.loss}">${fmt(onionProfit)}</div>
+      </div>
+      <div class="card" style="border-color:${C.cotton}30">
+        <div style="font-size:10px;color:${C.cotton};font-weight:700;margin-bottom:6px">🌿 COTTON</div>
+        <div class="pl-row" style="padding:4px 0"><span style="color:var(--dim);font-size:11px">Sales</span><span style="font-size:11px;font-weight:700;color:${C.cotton}">${fmt(cottonS)}</span></div>
+        <div class="pl-row" style="padding:4px 0"><span style="color:var(--dim);font-size:11px">Purchases</span><span style="font-size:11px;font-weight:700;color:${C.onion}">${fmt(cottonP)}</span></div>
+        <div class="pl-row" style="padding:4px 0;border:none"><span style="color:var(--dim);font-size:11px">Expenses</span><span style="font-size:11px;font-weight:700;color:${C.amber}">${fmt(cottonE)}</span></div>
+        <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${cottonProfit>=0?C.profit:C.loss}">${fmt(cottonProfit)}</div>
+      </div>
+    </div>`;
+
+  const expHtml = `
+    <div class="card">
+      <div style="font-weight:700;font-size:13px;color:var(--white);margin-bottom:12px">📂 Expenses by Category</div>
+      ${tE===0?`<div style="color:var(--dim);font-size:12px">No expenses in this period.</div>`:
+        Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
+        <div class="cat-bar-row">
+          <div class="cat-bar-label">${cat}</div>
+          <div class="cat-bar-track"><div class="cat-bar-fill" style="width:${Math.round(amt/catMax*100)}%;background:${catColors[cat]||C.dim}"></div></div>
+          <div class="cat-bar-val">${fmt(amt)}</div>
+        </div>`).join('')}
+      ${tE>0?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between"><span style="color:var(--dim);font-size:12px">Total Expenses</span><span style="font-weight:700;color:${C.amber}">${fmt(tE)}</span></div>`:''}
+    </div>`;
+
+  const duesHtml = `
+    <div class="report-section-title" style="color:${C.amber}">👨‍🌾 Due to Farmers <span style="font-size:11px;font-weight:400">(current outstanding)</span></div>
+    ${fDues.length ? fDues.map(f=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-weight:700;color:var(--white)">${esc(f.name)}</div><div class="txn-meta">${esc(f.village)}</div></div>
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${C.amber}">${fmt(f.due)}</div>
+    </div>`).join('') : `<div style="color:${C.profit};font-size:13px;margin-bottom:12px">✓ All farmers fully paid</div>`}
+    <div class="report-section-title" style="color:${C.purple};margin-top:4px">🏬 Due from Traders <span style="font-size:11px;font-weight:400">(current outstanding)</span></div>
+    ${tDues.length ? tDues.map(t=>`<div class="card" style="display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-weight:700;color:var(--white)">${esc(t.name)}</div><div class="txn-meta">${esc(t.city)}</div></div>
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${C.purple}">${fmt(t.due)}</div>
+    </div>`).join('') : `<div style="color:${C.profit};font-size:13px;margin-bottom:12px">✓ All traders cleared</div>`}`;
+
+  document.getElementById('reportsContent').innerHTML = `
+    <div class="page-hdr">
+      <span class="page-title">📈 Reports</span>
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+
+    <div class="card" style="margin-bottom:12px;padding:10px 12px">
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">📅 Date Range Filter</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input type="date" value="${reportFrom}" onchange="reportFrom=this.value;renderReports()"
+          style="background:var(--input);border:1px solid var(--borderL);border-radius:var(--radius-sm);padding:6px 8px;color:var(--white);font-size:12px;flex:1;min-width:120px;outline:none">
+        <span style="color:var(--dim);font-size:11px">to</span>
+        <input type="date" value="${reportTo}" onchange="reportTo=this.value;renderReports()"
+          style="background:var(--input);border:1px solid var(--borderL);border-radius:var(--radius-sm);padding:6px 8px;color:var(--white);font-size:12px;flex:1;min-width:120px;outline:none">
+        ${reportFrom||reportTo?`<button class="btn btn-ghost btn-xs" onclick="reportFrom='';reportTo='';renderReports()">✕ Clear</button>`:''}
+      </div>
+      ${reportFrom||reportTo?`<div style="font-size:10px;color:var(--onion);margin-top:5px">Showing filtered period · ${fP.length} purchases · ${fS.length} sales · ${fE.length} expenses</div>`:'<div style="font-size:10px;color:var(--faint);margin-top:4px">Showing all-time data</div>'}
+    </div>
+
+    <div class="report-tabs">
+      ${tabBtn('pl','📊 P&L')}
+      ${tabBtn('expenses','💼 Expenses')}
+      ${tabBtn('dues','⚖️ Dues')}
+    </div>
+
+    ${reportTab==='pl' ? plHtml : reportTab==='expenses' ? expHtml : duesHtml}
+    <div style="height:10px"></div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  CSV EXPORT
+// ═══════════════════════════════════════════════
+function exportCSV() {
+  const rows = [['Type','Date','Party','Commodity','Bags','Weight(kg)','Rate/kg','Total','Paid/Received','Due','Notes']];
+  const farmers = data.farmers||[], traders = data.traders||[];
+  (data.purchases||[]).forEach(p=>{
+    const f = farmers.find(x=>x.id===p.farmerId);
+    rows.push(['Purchase',p.date,f?.name||'—',p.commodity,p.bags,p.weightKg,p.ratePerKg,p.totalAmount,p.paidAmount,p.totalAmount-p.paidAmount,p.notes||'']);
+  });
+  (data.sales||[]).forEach(s=>{
+    const t = traders.find(x=>x.id===s.traderId);
+    rows.push(['Sale',s.date,t?.name||'—',s.commodity,s.bags,s.weightKg,s.ratePerKg,s.totalAmount,s.receivedAmount,s.totalAmount-s.receivedAmount,s.notes||'']);
+  });
+  (data.payments||[]).forEach(p=>{
+    const isF = p.type==='to_farmer';
+    const party = isF?farmers.find(x=>x.id===p.partyId):traders.find(x=>x.id===p.partyId);
+    rows.push([isF?'Payment-ToFarmer':'Payment-FromTrader',p.date,party?.name||'—','','',' ','',p.amount,p.amount,'',p.note||'']);
+  });
+  (data.expenses||[]).forEach(e=>{
+    rows.push(['Expense',e.date,e.vendor||'—',e.commodity,'','','',e.amount,'','',`${e.category}/${e.subCategory} ${e.notes||''}`]);
+  });
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `AGFarmedge_${today()}.csv`;
+  a.click();
+  toast('CSV exported ✓');
+}
+
+// ═══════════════════════════════════════════════
+//  FIREBASE SETUP MODAL
+// ═══════════════════════════════════════════════
+function openFirebaseSetup() {
+  const cfg = loadFirebaseConfig();
+  const connected = !!fbRef;
+  openModal(`
+    <div class="modal-hdr">
+      <span class="modal-title">☁ Data & Sync</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+
+    <!-- SYNC STATUS BANNER -->
+    <div style="background:${connected?'var(--profit)':'var(--amber)'}18;border:1px solid ${connected?'var(--profit)':'var(--amber)'}40;border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:16px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">${connected?'☁':'💾'}</span>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:${connected?'var(--profit)':'var(--amber)'}">${connected?'Connected to Firebase — Syncing across devices':'Local only — Data stays on this device'}</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:2px">${connected?'Your data syncs automatically when you make changes':'Data is saved in this browser. Use Firebase to sync across devices.'}</div>
+      </div>
+    </div>
+
+    <!-- SECTION TABS -->
+    <div style="display:flex;gap:6px;margin-bottom:16px">
+      <button class="btn btn-sm ${!cfg?'btn-onion':'btn-ghost'}" onclick="showSyncTab('firebase')" id="tabFb">🔥 Firebase Sync</button>
+      <button class="btn btn-sm btn-ghost" onclick="showSyncTab('backup')" id="tabBk">💾 Backup / Restore</button>
+    </div>
+
+    <!-- FIREBASE TAB -->
+    <div id="syncTabFirebase">
+      ${cfg && connected ? `
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;margin-bottom:14px">
+          <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Connected Project</div>
+          <div style="font-size:12px;font-weight:700;color:var(--white)">${cfg.projectId}</div>
+          <div style="font-size:10px;color:var(--faint);margin-top:2px">${cfg.databaseURL}</div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-danger" onclick="disconnectFirebase()">⚡ Disconnect</button>
+          <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+        </div>
+      ` : `
+        <p style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.7">Firebase Realtime Database gives you <b style="color:var(--white)">free cloud sync</b> across all your phones, tablets and PCs. Setup takes ~5 minutes.</p>
+
+        <div class="setup-step">
+          <div class="setup-step-title"><span class="setup-step-num">1</span>Create a Firebase Project</div>
+          <div class="setup-step-desc">
+            Open <a href="https://console.firebase.google.com" target="_blank" style="color:var(--cotton)">console.firebase.google.com</a> → <b>Add project</b> → give it any name → disable Analytics → <b>Create project</b>
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="setup-step-title"><span class="setup-step-num">2</span>Create Realtime Database</div>
+          <div class="setup-step-desc">
+            In sidebar → <b>Build → Realtime Database → Create Database</b> → choose region → select <b>"Start in test mode"</b> → Enable
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="setup-step-title"><span class="setup-step-num">3</span>Get Config Keys</div>
+          <div class="setup-step-desc">
+            Sidebar → <b>Project Settings ⚙</b> → General tab → scroll to "Your apps" → click <b>&lt;/&gt; Web</b> → register app → copy the config values below
+          </div>
+        </div>
+
+        <div class="setup-step">
+          <div class="setup-step-title"><span class="setup-step-num">4</span>Paste Your Config</div>
+          <div class="field" style="margin-top:8px">
+            <label>API Key *</label>
+            <input type="text" id="fbApiKey" value="${cfg?cfg.apiKey:''}" placeholder="AIzaSy...">
+          </div>
+          <div class="field">
+            <label>Database URL * <span style="font-size:9px;color:var(--faint)">(ends in .firebaseio.com)</span></label>
+            <input type="text" id="fbDbUrl" value="${cfg?cfg.databaseURL:''}" placeholder="https://your-project-default-rtdb.firebaseio.com">
+          </div>
+          <div class="field">
+            <label>Project ID *</label>
+            <input type="text" id="fbProjectId" value="${cfg?cfg.projectId:''}" placeholder="your-project-id">
+          </div>
+          <div class="field">
+            <label>Auth Domain <span style="font-size:9px;color:var(--faint)">(optional)</span></label>
+            <input type="text" id="fbAuthDomain" value="${cfg?cfg.authDomain:''}" placeholder="your-project.firebaseapp.com">
+          </div>
+        </div>
+
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px">⚠ Important — First Time Setup</div>
+          <div style="font-size:11px;color:var(--dim);line-height:1.6">When you connect for the first time, your <b style="color:var(--white)">current local data will be uploaded</b> to Firebase if the database is empty. On all other devices, Firebase data will always take priority and overwrite local data.</div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-onion" onclick="connectFirebase()">🔗 Connect &amp; Sync</button>
+          <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        </div>
+        <p style="font-size:10px;color:var(--faint);margin-top:10px;text-align:center">Free forever · 1 GB storage · 10 GB/month · No credit card</p>
+      `}
+    </div>
+
+    <!-- BACKUP TAB -->
+    <div id="syncTabBackup" style="display:none">
+      <p style="font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.7">
+        Export your data as a JSON file to back it up or transfer it to another device — even without Firebase.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="card" style="cursor:pointer" onclick="exportJSON()">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:24px">⬇</span>
+            <div>
+              <div style="font-weight:700;font-size:13px;color:var(--white)">Export Backup (JSON)</div>
+              <div style="font-size:11px;color:var(--dim);margin-top:2px">Download all your data as a file. Save it to Google Drive, WhatsApp yourself, or transfer to another phone.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <span style="font-size:24px">⬆</span>
+            <div>
+              <div style="font-weight:700;font-size:13px;color:var(--white)">Restore from Backup</div>
+              <div style="font-size:11px;color:var(--dim);margin-top:2px">Load a previously exported JSON file. This will <b style="color:var(--loss)">replace all current data</b>.</div>
+            </div>
+          </div>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(this)">
+          <button class="btn btn-amber btn-sm" onclick="document.getElementById('importFile').click()">Choose Backup File…</button>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--dim);margin-bottom:6px">DATA SUMMARY</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap">
+          ${[
+            ['👨‍🌾 Farmers',(data.farmers||[]).length],
+            ['🏬 Traders',(data.traders||[]).length],
+            ['🧅 Purchases',(data.purchases||[]).length],
+            ['🏪 Sales',(data.sales||[]).length],
+            ['💳 Payments',(data.payments||[]).length],
+            ['💼 Expenses',(data.expenses||[]).length],
+          ].map(([l,v])=>`<div><div style="font-size:10px;color:var(--faint)">${l}</div><div style="font-size:13px;font-weight:700;color:var(--white)">${v}</div></div>`).join('')}
+        </div>
+      </div>
+    </div>`);
+}
+
+function showSyncTab(tab) {
+  document.getElementById('syncTabFirebase').style.display = tab==='firebase'?'':'none';
+  document.getElementById('syncTabBackup').style.display   = tab==='backup'?'':'none';
+  document.getElementById('tabFb').className = 'btn btn-sm ' + (tab==='firebase'?'btn-onion':'btn-ghost');
+  document.getElementById('tabBk').className = 'btn btn-sm ' + (tab==='backup'?'btn-onion':'btn-ghost');
+}
+
+async function connectFirebase() {
+  const apiKey     = document.getElementById('fbApiKey').value.trim();
+  const authDomain = document.getElementById('fbAuthDomain').value.trim();
+  const databaseURL= document.getElementById('fbDbUrl').value.trim();
+  const projectId  = document.getElementById('fbProjectId').value.trim();
+  if (!apiKey)       return toast('API Key is required', true);
+  if (!databaseURL)  return toast('Database URL is required', true);
+  if (!projectId)    return toast('Project ID is required', true);
+  if (!databaseURL.includes('firebaseio.com')) return toast('Database URL must end in .firebaseio.com', true);
+  const config = { apiKey, authDomain, databaseURL, projectId };
+  toast('Connecting to Firebase...');
+  const ok = await initFirebase(config);
+  if (ok) { closeModal(); toast('☁ Connected! Pulling latest data...'); }
+}
+
+function disconnectFirebase() {
+  confirmDialog('Disconnect Firebase? Your data will remain saved locally on this device.', () => {
+    if (fbRef) { try { window._firebase.off(fbRef); } catch(e) {} }
+    fbApp = null; fbDb = null; fbRef = null; fbConfig = null;
+    isListeningFirebase = false;
+    localStorage.removeItem(FK);
+    setSyncStatus('');
+    closeModal(); toast('Disconnected from Firebase');
+  }, 'Disconnect', 'var(--loss)');
+}
+
+// ═══════════════════════════════════════════════
+//  JSON BACKUP / RESTORE
+// ═══════════════════════════════════════════════
+function exportJSON() {
+  const payload = JSON.stringify({_version:4, _exported:today(), ...ensureArrays(data)}, null, 2);
+  const blob = new Blob([payload], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `AGFarmedge_backup_${today()}.json`;
+  a.click();
+  markBackupDone();
+  toast('Backup downloaded ✓');
+}
+
+function importJSON(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!parsed.farmers && !parsed.purchases && !parsed.sales) {
+        return toast('Invalid backup file', true);
+      }
+      confirmDialog(
+        `Restore backup from ${parsed._exported||'unknown date'}? This will replace ALL current data (${(data.purchases||[]).length} purchases, ${(data.sales||[]).length} sales, etc.) with the backup's data.`,
+        () => {
+          data = ensureArrays(parsed);
+          saveData();
+          renderCurrentTab();
+          closeModal();
+          toast('Backup restored ✓');
+        },
+        'Restore', 'var(--amber)'
+      );
+    } catch(err) {
+      toast('Could not read file: ' + err.message, true);
+    }
+  };
+  reader.readAsText(file);
+  input.value = ''; // reset so same file can be re-selected
+}
+
+// ═══════════════════════════════════════════════
+//  CUSTOMIZATION ENGINE
+// ═══════════════════════════════════════════════
+const THEME_PRESETS = {
+  dark:    {name:'Dark',      colors:['#07071a','#0e0e24','#e8533a','#4fa8e8','#3db87a']},
+  light:   {name:'Light',     colors:['#f0f2f7','#ffffff','#e8533a','#4fa8e8','#3db87a']},
+  forest:  {name:'Forest',    colors:['#071410','#0d1f18','#5db87a','#48c890','#78d898']},
+  saffron: {name:'Saffron',   colors:['#1a0e00','#241400','#f07020','#e8a030','#90c848']},
+  ocean:   {name:'Ocean',     colors:['#020d1a','#051525','#20a8e8','#40c0f8','#38d898']},
+  slate:   {name:'Slate',     colors:['#0c0c0c','#181818','#e06060','#60a8e0','#60c878']},
+};
+
+const CK = 'agfarmedge_customization';
+
+const DEFAULT_CUSTOMIZATION = {
+  theme: 'dark',
+  density: 'default',
+  radius: 'default',
+  navStyle: 'default',
+  navPosition: 'bottom',
+  navLabels: true,
+  font: 'default',
+  fontSize: 13,
+  iconSize: 17,
+  accentColor: '',
+  primaryColor: '',
+  logoText: 'AG Farmedge Global',
+  logoSub: 'Onion & Cotton Traders',
+  logoIcon: '🌿',
+  cardShadow: false,
+  animationsOff: false,
+};
+
+let customization = {...DEFAULT_CUSTOMIZATION};
+
+function loadCustomization() {
+  try {
+    const raw = localStorage.getItem(CK);
+    if (raw) return {...DEFAULT_CUSTOMIZATION, ...JSON.parse(raw)};
+  } catch(e) {}
+  return {...DEFAULT_CUSTOMIZATION};
+}
+
+function saveCustomization() {
+  try { localStorage.setItem(CK, JSON.stringify(customization)); } catch(e) {}
+}
+
+function applyCustomization() {
+  const b = document.body;
+  const root = document.documentElement;
+
+  // Theme
+  b.className = b.className.replace(/\btheme-\S+/g,'').trim();
+  if (customization.theme !== 'dark') b.classList.add('theme-' + customization.theme);
+
+  // Density
+  b.className = b.className.replace(/\bdensity-\S+/g,'').trim();
+  if (customization.density !== 'default') b.classList.add('density-' + customization.density);
+
+  // Radius
+  b.className = b.className.replace(/\bradius-\S+/g,'').trim();
+  if (customization.radius !== 'default') b.classList.add('radius-' + customization.radius);
+
+  // Nav style + position — remove ALL nav-* classes first
+  b.className = b.className.replace(/\bnav-\S+/g,'').trim();
+  if (customization.navStyle !== 'default') b.classList.add('nav-' + customization.navStyle);
+  // Nav position (bottom is default — no extra class needed)
+  const pos = customization.navPosition || 'bottom';
+  if (pos === 'left')  b.classList.add('nav-left');
+  if (pos === 'right') b.classList.add('nav-right');
+  if (pos === 'top')   b.classList.add('nav-top');
+  if (!customization.navLabels) b.classList.add('nav-nolabels');
+
+  // Font
+  b.className = b.className.replace(/\bfont-\S+/g,'').trim();
+  if (customization.font !== 'default') b.classList.add('font-' + customization.font);
+
+  // Animations off
+  b.classList.toggle('no-animations', !!customization.animationsOff);
+
+  // Font size
+  const fs = Math.min(Math.max(customization.fontSize || 13, 9), 20);
+  root.style.setProperty('--font-size-base', fs + 'px');
+
+  // Icon size
+  const is = Math.min(Math.max(customization.iconSize || 17, 10), 32);
+  root.style.setProperty('--nav-icon-size', is + 'px');
+  // Scale nav label size proportionally
+  root.style.setProperty('--nav-label-size', Math.max(7, Math.round(is * 0.55)) + 'px');
+  // Scale nav height to fit icons
+  const nh = Math.max(46, Math.round(is * 3.4));
+  root.style.setProperty('--nav-height', nh + 'px');
+
+  // Card shadow
+  const cardShadowStyle = document.getElementById('cardShadowStyle');
+  if (cardShadowStyle) {
+    cardShadowStyle.textContent = customization.cardShadow
+      ? '.card{box-shadow:0 4px 18px rgba(0,0,0,.35)!important}'
+      : '';
+  }
+
+  // Accent color override — also sync the C object so rendered HTML uses correct color
+  if (customization.accentColor) {
+    root.style.setProperty('--onion', customization.accentColor);
+    C.onion = customization.accentColor;
+  } else {
+    root.style.removeProperty('--onion');
+    const themeDefaults = {
+      dark:'#e8533a', light:'#d44020', forest:'#5db87a',
+      saffron:'#f07020', ocean:'#20a8e8', slate:'#e06060'
+    };
+    C.onion = themeDefaults[customization.theme] || '#e8533a';
+  }
+
+  if (customization.primaryColor) {
+    root.style.setProperty('--cotton', customization.primaryColor);
+    C.cotton = customization.primaryColor;
+  } else {
+    root.style.removeProperty('--cotton');
+    const themeDefaults = {
+      dark:'#4fa8e8', light:'#1a7ec8', forest:'#48c890',
+      saffron:'#e8a030', ocean:'#40c0f8', slate:'#60a8e0'
+    };
+    C.cotton = themeDefaults[customization.theme] || '#4fa8e8';
+  }
+
+  // Re-sync COMM_COLOR too
+  COMM_COLOR.Onion = C.onion;
+  COMM_COLOR.Cotton = C.cotton;
+
+  // Branding
+  const lt = document.querySelector('.logo-text');
+  const ls = document.querySelector('.logo-sub');
+  const li = document.querySelector('.logo-icon');
+  if (lt) lt.textContent = customization.logoText || 'AG Farmedge Global';
+  if (ls) ls.textContent = customization.logoSub || 'Onion & Cotton Traders';
+  if (li) li.textContent = customization.logoIcon || '🌿';
+}
+
+function setCustom(key, val) {
+  customization[key] = val;
+  saveCustomization();
+  applyCustomization();
+  if (currentTab === 'settings') renderSettings();
+}
+
+function renderSettings() {
+  const c = customization;
+  const themeSwatches = Object.entries(THEME_PRESETS).map(([key, t]) => {
+    const cols = t.colors;
+    return `<div class="theme-swatch ${c.theme===key?'active':''}" onclick="setCustom('theme','${key}')">
+      <div class="theme-swatch-preview">
+        ${cols.map(col=>`<span style="background:${col}"></span>`).join('')}
+      </div>
+      <div class="theme-swatch-name">${t.name}</div>
+    </div>`;
+  }).join('');
+
+  const chip = (label, key, val) => `<div class="option-chip ${c[key]===val?'active':''}" onclick="setCustom('${key}','${val}')">${label}</div>`;
+  const toggle = (label, key) => `<div class="option-chip ${c[key]?'active':''}" onclick="setCustom('${key}',${!c[key]})">${c[key]?'✓ ':''} ${label}</div>`;
+
+  const fs = c.fontSize || 13;
+  const is = c.iconSize || 17;
+
+  document.getElementById('settingsContent').innerHTML = `
+    <div class="page-title" style="margin-bottom:4px">⚙️ Settings</div>
+    <div style="font-size:11px;color:var(--dim);margin-bottom:16px">Customize layout, theme &amp; appearance</div>
+
+    <!-- THEME -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎨 Theme</div>
+      <div class="theme-grid">${themeSwatches}</div>
+    </div>
+
+    <!-- ACCENT COLORS -->
+    <div class="settings-section">
+      <div class="settings-section-title">🖌 Accent Colors</div>
+      <div class="color-picker-row">
+        <label>Primary Accent (Purchases / Actions)</label>
+        <input type="color" value="${c.accentColor || '#e8533a'}" onchange="setCustom('accentColor',this.value)">
+        ${c.accentColor ? `<button class="btn btn-ghost btn-xs" onclick="setCustom('accentColor','')">Reset</button>` : ''}
+      </div>
+      <div class="color-picker-row">
+        <label>Secondary Color (Sales / Info)</label>
+        <input type="color" value="${c.primaryColor || '#4fa8e8'}" onchange="setCustom('primaryColor',this.value)">
+        ${c.primaryColor ? `<button class="btn btn-ghost btn-xs" onclick="setCustom('primaryColor','')">Reset</button>` : ''}
+      </div>
+    </div>
+
+    <!-- TYPOGRAPHY & FONT SIZE -->
+    <div class="settings-section">
+      <div class="settings-section-title">🔤 Typography</div>
+      <div class="option-row" style="margin-bottom:12px">
+        ${chip('Noto Sans','font','default')}
+        ${chip('Baloo 2','font','baloo')}
+        ${chip('Monospace','font','mono')}
+      </div>
+      <div class="range-row">
+        <label>Font Size</label>
+        <input type="range" min="9" max="20" value="${fs}" step="1"
+          oninput="this.nextElementSibling.textContent=this.value+'px';setCustom('fontSize',parseInt(this.value))">
+        <span>${fs}px</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px">
+        <div style="font-size:${Math.max(9,fs-3)}px;color:var(--dim)">Small text</div>
+        <div style="font-size:${fs}px;color:var(--text)">Normal text</div>
+        <div style="font-size:${Math.min(20,fs+3)}px;color:var(--white);font-weight:700">Large text</div>
+      </div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="settings-section">
+      <div class="settings-section-title">🧭 Navigation</div>
+
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Style</div>
+      <div class="option-row" style="margin-bottom:12px">
+        ${chip('Default','navStyle','default')}
+        ${chip('Pill','navStyle','pill')}
+      </div>
+
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Position</div>
+      <div class="option-row" style="margin-bottom:12px">
+        ${chip('⬇ Bottom','navPosition','bottom')}
+        ${chip('⬆ Top','navPosition','top')}
+        ${chip('◀ Left','navPosition','left')}
+        ${chip('▶ Right','navPosition','right')}
+      </div>
+
+      <div style="font-size:10px;color:var(--dim);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px">Icon Size</div>
+      <div class="range-row">
+        <label>Nav Icons</label>
+        <input type="range" min="10" max="32" value="${is}" step="1"
+          oninput="this.nextElementSibling.textContent=this.value+'px';setCustom('iconSize',parseInt(this.value))">
+        <span>${is}px</span>
+      </div>
+      <div style="display:flex;gap:16px;align-items:center;margin-top:6px;padding:8px 12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border)">
+        <span style="font-size:${Math.max(10,is-5)}px">📊</span>
+        <span style="font-size:${is}px">📊</span>
+        <span style="font-size:${Math.min(32,is+5)}px">📊</span>
+        <span style="font-size:10px;color:var(--dim)">← preview</span>
+      </div>
+
+      <div style="margin-top:10px">
+        ${toggle('Show Labels','navLabels')}
+      </div>
+    </div>
+
+    <!-- LAYOUT DENSITY -->
+    <div class="settings-section">
+      <div class="settings-section-title">📐 Layout Density</div>
+      <div class="option-row">
+        ${chip('Compact','density','compact')}
+        ${chip('Default','density','default')}
+        ${chip('Comfortable','density','comfortable')}
+      </div>
+    </div>
+
+    <!-- BORDER RADIUS -->
+    <div class="settings-section">
+      <div class="settings-section-title">⬛ Corner Style</div>
+      <div class="option-row">
+        ${chip('Sharp','radius','sharp')}
+        ${chip('Default','radius','default')}
+        ${chip('Rounded','radius','medium')}
+        ${chip('Pill','radius','pill')}
+      </div>
+    </div>
+
+    <!-- CARDS & EFFECTS -->
+    <div class="settings-section">
+      <div class="settings-section-title">✨ Card Effects</div>
+      <div class="option-row">
+        ${toggle('Card Shadows','cardShadow')}
+        ${toggle('Reduce Animations','animationsOff')}
+      </div>
+    </div>
+
+    <!-- BRANDING -->
+    <div class="settings-section">
+      <div class="settings-section-title">🏷 App Branding</div>
+      <div class="brand-preview">
+        <span style="font-size:22px" id="previewIcon">${c.logoIcon||'🌿'}</span>
+        <div>
+          <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:var(--white)" id="previewText">${c.logoText||'AG Farmedge Global'}</div>
+          <div style="font-size:9px;color:var(--onion);font-weight:700;letter-spacing:1px;text-transform:uppercase" id="previewSub">${c.logoSub||'Onion &amp; Cotton Traders'}</div>
+        </div>
+      </div>
+      <div class="field"><label>App Icon (Emoji)</label><input type="text" id="bIcon" value="${c.logoIcon||'🌿'}" placeholder="🌿" maxlength="4" oninput="updateBrandPreview()"></div>
+      <div class="field"><label>App Name</label><input type="text" id="bText" value="${c.logoText||'AG Farmedge Global'}" placeholder="AG Farmedge Global" oninput="updateBrandPreview()"></div>
+      <div class="field"><label>Tagline</label><input type="text" id="bSub" value="${c.logoSub||'Onion & Cotton Traders'}" placeholder="Onion & Cotton Traders" oninput="updateBrandPreview()"></div>
+      <button class="btn btn-onion btn-sm" onclick="saveBranding()">Apply Branding</button>
+    </div>
+
+    <!-- RESET -->
+    <div class="reset-section">
+      <div class="settings-section-title">⚠️ Reset</div>
+      <button class="btn btn-danger btn-sm" onclick="resetCustomization()">Reset All Customizations</button>
+      <div style="margin-top:10px">
+        <button class="btn btn-danger btn-sm" onclick="resetAllData()">🗑 Clear All Data</button>
+        <div style="font-size:10px;color:var(--faint);margin-top:5px">Removes all purchases, sales, payments, expenses, farmers &amp; traders. Cannot be undone.</div>
+      </div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class="settings-section" style="margin-top:16px">
+      <div class="settings-section-title">💾 Data Backup</div>
+      <div style="font-size:11px;color:var(--dim);margin-bottom:10px">Export your data as a JSON file. Restore it later or transfer to another device.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="exportJSON()">⬇ Export Backup</button>
+        <button class="btn btn-ghost btn-sm" onclick="openFirebaseSetup();setTimeout(()=>showSyncTab('backup'),100)">⬆ Restore Backup</button>
+        <button class="btn btn-ghost btn-sm" onclick="openFirebaseSetup()">☁ Firebase Sync</button>
+      </div>
+    </div>
+    <div style="height:16px"></div>`;
+}
+
+function updateBrandPreview() {
+  const icon = document.getElementById('bIcon')?.value || '🌿';
+  const text = document.getElementById('bText')?.value || 'AG Farmedge Global';
+  const sub = document.getElementById('bSub')?.value || 'Onion & Cotton Traders';
+  const pi = document.getElementById('previewIcon'); if(pi) pi.textContent = icon;
+  const pt = document.getElementById('previewText'); if(pt) pt.textContent = text;
+  const ps = document.getElementById('previewSub'); if(ps) ps.textContent = sub;
+}
+
+function saveBranding() {
+  customization.logoIcon = document.getElementById('bIcon').value || '🌿';
+  customization.logoText = document.getElementById('bText').value || 'AG Farmedge Global';
+  customization.logoSub = document.getElementById('bSub').value || 'Onion & Cotton Traders';
+  saveCustomization();
+  applyCustomization();
+  toast('Branding updated ✓');
+}
+
+function resetCustomization() {
+  confirmDialog('Reset all customizations to defaults? Theme, fonts, layout and branding will revert.', () => {
+    customization = {...DEFAULT_CUSTOMIZATION};
+    saveCustomization();
+    applyCustomization();
+    renderSettings();
+    toast('Reset to defaults');
+  }, 'Reset', 'var(--amber)');
+}
+
+function resetAllData() {
+  confirmDialog('Clear ALL data? This removes all farmers, traders, purchases, sales, payments and expenses. Cannot be undone.', () => {
+    data = ensureArrays({});
+    saveData();
+    renderCurrentTab();
+    toast('All data cleared');
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  BACKUP REMINDER
+// ═══════════════════════════════════════════════
+const BACKUP_KEY = 'agfarmedge_last_backup';
+
+function markBackupDone() {
+  localStorage.setItem(BACKUP_KEY, today());
+}
+
+function checkBackupReminder() {
+  // Only remind if there's real data to protect
+  const hasData = (data.purchases||[]).length + (data.sales||[]).length > 0;
+  if (!hasData) return;
+  const last = localStorage.getItem(BACKUP_KEY);
+  if (!last) { scheduleBackupToast(); return; }
+  const daysSince = Math.floor((new Date(today()) - new Date(last)) / 86400000);
+  if (daysSince >= 7) scheduleBackupToast();
+}
+
+function scheduleBackupToast() {
+  setTimeout(() => {
+    confirmDialog(
+      "You haven't exported a backup in a while. It's quick and protects your data if the browser clears storage.",
+      () => { exportJSON(); markBackupDone(); },
+      '⬇ Export Now',
+      'var(--amber)'
+    );
+  }, 3000);
+}
+
+// ═══════════════════════════════════════════════
+//  SAFE DATA HELPERS
+// ═══════════════════════════════════════════════
+function ensureArrays(d) {
+  d.farmers   = Array.isArray(d.farmers)   ? d.farmers   : [];
+  d.traders   = Array.isArray(d.traders)   ? d.traders   : [];
+  d.purchases = Array.isArray(d.purchases) ? d.purchases : [];
+  d.sales     = Array.isArray(d.sales)     ? d.sales     : [];
+  d.payments  = Array.isArray(d.payments)  ? d.payments  : [];
+  d.expenses  = Array.isArray(d.expenses)  ? d.expenses  : [];
+  return d;
+}
+
+// ═══════════════════════════════════════════════
+//  PWA — SERVICE WORKER & INSTALL PROMPT
+// ═══════════════════════════════════════════════
+let _deferredInstallPrompt = null;
+
+function initPWA() {
+  // Register Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // Check for updates
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New version available — show update bar
+            document.getElementById('pwaUpdateBar').classList.add('show');
+          }
+        });
+      });
+    }).catch(e => console.log('[SW] Registration failed:', e));
+  }
+
+  // Install prompt — capture for later
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    _deferredInstallPrompt = e;
+    // Show install bar after 5s if not already installed
+    const dismissed = localStorage.getItem('pwa_install_dismissed');
+    if (!dismissed) {
+      setTimeout(() => {
+        document.getElementById('pwaInstallBar').classList.add('show');
+      }, 5000);
+    }
+  });
+
+  // Hide install bar when app is installed
+  window.addEventListener('appinstalled', () => {
+    document.getElementById('pwaInstallBar').classList.remove('show');
+    _deferredInstallPrompt = null;
+    toast('App installed successfully! ✓');
+  });
+}
+
+function applyPWAUpdate() {
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage('skipWaiting');
+  }
+  window.location.reload();
+}
+
+function triggerInstall() {
+  if (_deferredInstallPrompt) {
+    _deferredInstallPrompt.prompt();
+    _deferredInstallPrompt.userChoice.then(choice => {
+      if (choice.outcome === 'accepted') toast('Installing app... ✓');
+      _deferredInstallPrompt = null;
+    });
+  }
+  document.getElementById('pwaInstallBar').classList.remove('show');
+}
+
+function dismissInstall() {
+  document.getElementById('pwaInstallBar').classList.remove('show');
+  localStorage.setItem('pwa_install_dismissed', '1');
+}
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+(async function init() {
+  // Load customization first
+  customization = loadCustomization();
+  applyCustomization();
+
+  // Check for crash-journal recovery before loading
+  await recoverPending();
+
+  // Load data: IndexedDB → localStorage → defaults
+  const local = await loadLocal();
+  data = ensureArrays(migrateData(local || JSON.parse(JSON.stringify(DEFAULT_DATA))));
+  if (!local) await saveLocal();
+  renderDashboard();
+
+  // Connect Firebase if previously configured
+  const cfg = loadFirebaseConfig();
+  if (cfg) {
+    setSyncStatus('syncing');
+    await initFirebase(cfg);
+  } else {
+    setSyncStatus('');
+  }
+
+  // PWA init
+  initPWA();
+
+  // Periodic backup reminder
+  checkBackupReminder();
+})();
+</script>
+</body>
+</html>
