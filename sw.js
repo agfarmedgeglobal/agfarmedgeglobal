@@ -3,7 +3,7 @@
 //  Provides: full offline support, asset caching, background sync
 // ═══════════════════════════════════════════════════════════════
 
-const CACHE_NAME = 'agfarmedge-v4';
+const CACHE_NAME = 'agfarmedge-v5';
 const FIREBASE_CACHE = 'agfarmedge-firebase-v1';
 
 // Assets to cache on install — the app shell
