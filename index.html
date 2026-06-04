@@ -707,7 +707,7 @@ async function initFirebase(config) {
     fbRef = ref(fbDb, 'agfarmedge/data');
     fbConfig = config;
     localStorage.setItem(FK, JSON.stringify(config));
-	idbSet('fb_config_backup', config);
+	await idbSet('fb_config_backup', config);
     isListeningFirebase = true;
     setSyncStatus('syncing');
 
@@ -774,7 +774,7 @@ window.addEventListener('offline', () => setSyncStatus('offline'));
 
 function saveData() {
   saveLocal();
-  const cfg = loadFirebaseConfig(); if (cfg) idbSet('fb_config_backup', cfg);
+  const cfg = loadFirebaseConfig(); if (cfg) await idbSet('fb_config_backup', cfg);
   if (localFileHandle) {
     writeToPhysicalFile();
   }
