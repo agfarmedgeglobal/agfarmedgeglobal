@@ -780,7 +780,7 @@ async function saveData() {
   }
   if (fbRef) {
     clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(pushToFirebase, 800);
+    syncTimeout = setTimeout(async () => await pushToFirebase(), 800);
   }
 }
 
