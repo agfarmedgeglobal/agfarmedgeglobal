@@ -561,6 +561,45 @@ let isListeningFirebase = false;
 let localFileHandle = null;
 
 // ═══════════════════════════════════════════════
+//  INDEXEDDB HELPERS  (idbGet / idbSet)
+// ═══════════════════════════════════════════════
+const IDB_NAME = 'agfarmedge_idb';
+const IDB_STORE = 'kv';
+
+function _openIDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function idbSet(key, value) {
+  try {
+    const db = await _openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readwrite');
+      tx.objectStore(IDB_STORE).put(value, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror    = e => reject(e.target.error);
+    });
+  } catch(e) { console.warn('[idbSet] failed:', e); }
+}
+
+async function idbGet(key) {
+  try {
+    const db = await _openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const req = tx.objectStore(IDB_STORE).get(key);
+      req.onsuccess = e => resolve(e.target.result ?? null);
+      req.onerror   = e => reject(e.target.error);
+    });
+  } catch(e) { console.warn('[idbGet] failed:', e); return null; }
+}
+
+// ═══════════════════════════════════════════════
 //  HELPERS
 // ═══════════════════════════════════════════════
 const fmt = n => '₹' + Number(n||0).toLocaleString('en-IN');
