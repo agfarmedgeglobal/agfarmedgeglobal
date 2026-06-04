@@ -707,6 +707,7 @@ async function initFirebase(config) {
     fbRef = ref(fbDb, 'agfarmedge/data');
     fbConfig = config;
     localStorage.setItem(FK, JSON.stringify(config));
+	idbSet('fb_config_backup', config);
     isListeningFirebase = true;
     setSyncStatus('syncing');
 
@@ -773,6 +774,7 @@ window.addEventListener('offline', () => setSyncStatus('offline'));
 
 function saveData() {
   saveLocal();
+  const cfg = loadFirebaseConfig(); if (cfg) idbSet('fb_config_backup', cfg);
   if (localFileHandle) {
     writeToPhysicalFile();
   }
@@ -2311,7 +2313,16 @@ function ensureArrays(d) {
   if (!local) saveLocal();
   renderDashboard();
 
-  const cfg = loadFirebaseConfig();
+  let cfg = loadFirebaseConfig();
+  if (!cfg) {
+    const backupCfg = await idbGet('fb_config_backup');
+    if (backupCfg && backupCfg.apiKey) {
+      cfg = backupCfg;
+      // Restore to localStorage so your form fields stay populated next time
+      localStorage.setItem(FK, JSON.stringify(cfg)); 
+    }
+  }
+
   if (cfg) {
     setSyncStatus('syncing');
     await initFirebase(cfg);
