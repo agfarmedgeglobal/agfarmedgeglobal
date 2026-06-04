@@ -772,7 +772,7 @@ window.addEventListener('online', () => {
 });
 window.addEventListener('offline', () => setSyncStatus('offline'));
 
-function saveData() {
+async function saveData() {
   saveLocal();
   const cfg = loadFirebaseConfig(); if (cfg) await idbSet('fb_config_backup', cfg);
   if (localFileHandle) {
