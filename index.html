@@ -648,7 +648,27 @@ function confirmDialog(msg, onOk, okLabel='Delete', okColor='var(--loss)') {
 const SCHEMA_VERSION = 5;
 
 function migrateData(d) {
-  // Ensure every record has the fields introduced in v5+
+  // ── STEP 1: Convert ALL ids and foreign keys to strings ──────
+  // Old records used integer IDs (1,2,3). New records use UUIDs.
+  // Strict equality (===) fails between 1 and "1", causing farmers
+  // to show as "—" in purchases. Normalise everything to strings.
+  (d.farmers||[]).forEach(f => { f.id = String(f.id); });
+  (d.traders||[]).forEach(t => { t.id = String(t.id); });
+  (d.purchases||[]).forEach(p => {
+    p.id = String(p.id);
+    p.farmerId = String(p.farmerId);
+  });
+  (d.sales||[]).forEach(s => {
+    s.id = String(s.id);
+    s.traderId = String(s.traderId);
+  });
+  (d.payments||[]).forEach(p => {
+    p.id = String(p.id);
+    p.partyId = String(p.partyId);
+  });
+  (d.expenses||[]).forEach(e => { e.id = String(e.id); });
+
+  // ── STEP 2: Ensure every record has fields introduced in v5+ ──
   (d.purchases||[]).forEach(p => {
     if (p.bags === undefined) p.bags = 0;
     if (p.notes === undefined) p.notes = '';
@@ -965,8 +985,8 @@ function renderPurchases() {
             <div class="txn-meta">${p.date} &nbsp;${badge(p.commodity, COMM_COLOR[p.commodity])}</div>
           </div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-xs" onclick="openPurchaseForm(${p.id})">Edit</button>
-            <button class="btn btn-danger btn-xs" onclick="delPurchase(${p.id})">✕</button>
+            <button class="btn btn-ghost btn-xs" onclick="openPurchaseForm('${p.id}')">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delPurchase('${p.id}')">✕</button>
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:flex-end">
@@ -998,7 +1018,7 @@ function openPurchaseForm(id) {
     <div class="field"><label>Amount Paid (₹)</label><input type="number" id="pPaid" value="${p?p.paidAmount:''}" placeholder="0" min="0"></div>
     <div class="field"><label>Notes</label><textarea id="pNotes">${p?esc(p.notes):''}</textarea></div>
     <div class="btn-row">
-      <button class="btn btn-onion" onclick="savePurchase(${id||0})">Save Purchase</button>
+      <button class="btn btn-onion" onclick="savePurchase('${id||0}')">Save Purchase</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>`);
 }
@@ -1033,7 +1053,7 @@ function savePurchase(id) {
     notes:document.getElementById('pNotes').value
   };
   data.purchases = ensureArrays(data).purchases;
-  if (id) data.purchases = data.purchases.map(x=>x.id===id?{...rec,id}:x);
+  if (id && id !== '0') data.purchases = data.purchases.map(x=>x.id===id?{...rec,id}:x);
   else data.purchases.push({...rec, id:uid()});
   saveData(); closeModal(); renderPurchases(); toast('Purchase saved \u2713');
 }
@@ -1085,8 +1105,8 @@ function renderSales() {
             <div class="txn-meta">${s.date} · ${esc(t?.city||'')} &nbsp;${badge(s.commodity, COMM_COLOR[s.commodity])}</div>
           </div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-xs" onclick="openSaleForm(${s.id})">Edit</button>
-            <button class="btn btn-danger btn-xs" onclick="delSale(${s.id})">✕</button>
+            <button class="btn btn-ghost btn-xs" onclick="openSaleForm('${s.id}')">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delSale('${s.id}')">✕</button>
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;align-items:flex-end">
@@ -1118,7 +1138,7 @@ function openSaleForm(id) {
     <div class="field"><label>Amount Received (₹)</label><input type="number" id="sRecv" value="${s?s.receivedAmount:''}" placeholder="0" min="0"></div>
     <div class="field"><label>Notes</label><textarea id="sNotes">${s?esc(s.notes):''}</textarea></div>
     <div class="btn-row">
-      <button class="btn btn-cotton" onclick="saveSale(${id||0})">Save Sale</button>
+      <button class="btn btn-cotton" onclick="saveSale('${id||0}')">Save Sale</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>`);
 }
@@ -1153,7 +1173,7 @@ function saveSale(id) {
     notes:document.getElementById('sNotes').value
   };
   data.sales = ensureArrays(data).sales;
-  if (id) data.sales = data.sales.map(x=>x.id===id?{...rec,id}:x);
+  if (id && id !== '0') data.sales = data.sales.map(x=>x.id===id?{...rec,id}:x);
   else data.sales.push({...rec, id:uid()});
   saveData(); closeModal(); renderSales(); toast('Sale saved ✓');
 }
@@ -1185,8 +1205,8 @@ function renderPayments() {
         <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
           <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:15px;color:${isF?C.amber:C.profit}">${fmt(p.amount)}</div>
           <div style="display:flex;gap:5px">
-            <button class="btn btn-ghost btn-xs" onclick="openPaymentForm(${p.id})">Edit</button>
-            <button class="btn btn-danger btn-xs" onclick="delPayment(${p.id})">✕</button>
+            <button class="btn btn-ghost btn-xs" onclick="openPaymentForm('${p.id}')">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delPayment('${p.id}')">✕</button>
           </div>
         </div>
       </div>`;
@@ -1210,7 +1230,7 @@ function openPaymentForm(id) {
     <div class="field"><label>Mode</label><select id="pyMode">${PAY_MODES.map(m=>`<option ${p&&p.mode===m?'selected':''}>${m}</option>`).join('')}</select></div>
     <div class="field"><label>Note / Reference</label><input type="text" id="pyNote" value="${p?esc(p.note||''):''}" placeholder="NEFT ref, cheque no..."></div>
     <div class="btn-row">
-      <button class="btn btn-profit" onclick="savePayment(${id||0})">${p?'Update Payment':'Save Payment'}</button>
+      <button class="btn btn-profit" onclick="savePayment('${id||0}')">${p?'Update Payment':'Save Payment'}</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>`);
   refreshPayParties(p?p.partyId:0);
@@ -1238,7 +1258,7 @@ function savePayment(id) {
     mode:document.getElementById('pyMode').value,
     note:document.getElementById('pyNote').value
   };
-  if (id) data.payments = data.payments.map(x=>x.id===id?{...rec,id}:x);
+  if (id && id !== '0') data.payments = data.payments.map(x=>x.id===id?{...rec,id}:x);
   else data.payments.push({...rec, id:uid()});
   saveData(); closeModal(); renderPayments(); toast(id?'Payment updated ✓':'Payment recorded ✓');
 }
@@ -1284,8 +1304,8 @@ function renderExpenses() {
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:7px">
         <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:14px;color:${C.amber}">${fmt(e.amount)}</div>
         <div style="display:flex;gap:5px">
-          <button class="btn btn-ghost btn-xs" onclick="openExpenseForm(${e.id})">Edit</button>
-          <button class="btn btn-danger btn-xs" onclick="delExpense(${e.id})">✕</button>
+          <button class="btn btn-ghost btn-xs" onclick="openExpenseForm('${e.id}')">Edit</button>
+          <button class="btn btn-danger btn-xs" onclick="delExpense('${e.id}')">✕</button>
         </div>
       </div>
     </div>`).join('') : `<div class="empty-state"><div class="empty-icon">💼</div><div class="empty-text">${expSearch?'No matching expenses':'No expenses recorded'}</div></div>`}
@@ -1306,7 +1326,7 @@ function openExpenseForm(id) {
     <div class="field"><label>Vendor / Party</label><input type="text" id="eVendor" value="${e?esc(e.vendor||''):''}" placeholder="Raju Transport"></div>
     <div class="field"><label>Notes</label><textarea id="eNotes" placeholder="Optional details...">${e?esc(e.notes||''):''}</textarea></div>
     <div class="btn-row">
-      <button class="btn btn-amber" onclick="saveExpense(${id||0})">${e?'Update Expense':'Save Expense'}</button>
+      <button class="btn btn-amber" onclick="saveExpense('${id||0}')">${e?'Update Expense':'Save Expense'}</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>`);
 }
@@ -1330,7 +1350,7 @@ function saveExpense(id) {
     notes:document.getElementById('eNotes').value
   };
   data.expenses = ensureArrays(data).expenses;
-  if (id) data.expenses = data.expenses.map(x=>x.id===id?{...rec,id}:x);
+  if (id && id !== '0') data.expenses = data.expenses.map(x=>x.id===id?{...rec,id}:x);
   else data.expenses.push({...rec, id:uid()});
   saveData(); closeModal(); renderExpenses(); toast(id?'Expense updated ✓':'Expense saved ✓');
 }
@@ -1371,8 +1391,8 @@ function renderFarmers() {
             <div style="margin-top:7px">${badge(f.commodity, COMM_COLOR[f.commodity])}</div>
           </div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-xs" onclick="openFarmerForm(${f.id})">Edit</button>
-            <button class="btn btn-danger btn-xs" onclick="delFarmer(${f.id})">Del</button>
+            <button class="btn btn-ghost btn-xs" onclick="openFarmerForm('${f.id}')">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delFarmer('${f.id}')">Del</button>
           </div>
         </div>
         <div class="party-card-stats">
@@ -1394,7 +1414,7 @@ function openFarmerForm(id) {
     <div class="field"><label>Phone Number</label><input type="tel" id="fPhone" value="${f?esc(f.phone):''}" placeholder="9876543210"></div>
     <div class="field"><label>Commodity</label><select id="fComm"><option ${!f||f.commodity==='Onion'?'selected':''}>Onion</option><option ${f&&f.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
     <div class="btn-row">
-      <button class="btn btn-onion" onclick="saveFarmer(${id||0})">Save Farmer</button>
+      <button class="btn btn-onion" onclick="saveFarmer('${id||0}')">Save Farmer</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>`);
 }
@@ -1408,7 +1428,7 @@ function saveFarmer(id) {
   if (phone && !/^\d{10}$/.test(phone)) return toast('Phone must be a 10-digit number', true);
   const rec = {name, village, phone, commodity:document.getElementById('fComm').value};
   data.farmers = ensureArrays(data).farmers;
-  if (id) data.farmers = data.farmers.map(x=>x.id===id?{...x,...rec}:x);
+  if (id && id !== '0') data.farmers = data.farmers.map(x=>x.id===id?{...x,...rec}:x);
   else data.farmers.push({...rec, id:uid()});
   saveData(); closeModal(); renderFarmers(); toast('Farmer saved ✓');
 }
@@ -1453,8 +1473,8 @@ function renderTraders() {
             <div style="margin-top:7px">${badge(t.commodity, COMM_COLOR[t.commodity])}</div>
           </div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-ghost btn-xs" onclick="openTraderForm(${t.id})">Edit</button>
-            <button class="btn btn-danger btn-xs" onclick="delTrader(${t.id})">Del</button>
+            <button class="btn btn-ghost btn-xs" onclick="openTraderForm('${t.id}')">Edit</button>
+            <button class="btn btn-danger btn-xs" onclick="delTrader('${t.id}')">Del</button>
           </div>
         </div>
         <div class="party-card-stats">
@@ -1476,7 +1496,7 @@ function openTraderForm(id) {
     <div class="field"><label>Phone Number</label><input type="tel" id="tPhone" value="${t?esc(t.phone):''}" placeholder="9911223344"></div>
     <div class="field"><label>Commodity</label><select id="tComm"><option ${!t||t.commodity==='Onion'?'selected':''}>Onion</option><option ${t&&t.commodity==='Cotton'?'selected':''}>Cotton</option></select></div>
     <div class="btn-row">
-      <button class="btn btn-cotton" onclick="saveTrader(${id||0})">Save Trader</button>
+      <button class="btn btn-cotton" onclick="saveTrader('${id||0}')">Save Trader</button>
       <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
     </div>`);
 }
@@ -1488,7 +1508,7 @@ function saveTrader(id) {
   if (tPhone && !/^\d{10}$/.test(tPhone)) return toast('Phone must be a 10-digit number', true);
   const rec = {name, city:document.getElementById('tCity').value.trim(), phone:tPhone, commodity:document.getElementById('tComm').value};
   data.traders = ensureArrays(data).traders;
-  if (id) data.traders = data.traders.map(x=>x.id===id?{...x,...rec}:x);
+  if (id && id !== '0') data.traders = data.traders.map(x=>x.id===id?{...x,...rec}:x);
   else data.traders.push({...rec, id:uid()});
   saveData(); closeModal(); renderTraders(); toast('Trader saved ✓');
 }
