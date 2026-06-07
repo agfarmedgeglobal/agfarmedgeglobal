@@ -565,7 +565,6 @@ let localFileHandle = null;
 // ═══════════════════════════════════════════════
 const IDB_NAME = 'agfarmedge_idb';
 const IDB_STORE = 'kv';
-
 function _openIDB() {
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(IDB_NAME, 1);
@@ -574,7 +573,6 @@ function _openIDB() {
     req.onerror   = e => reject(e.target.error);
   });
 }
-
 async function idbSet(key, value) {
   try {
     const db = await _openIDB();
@@ -586,7 +584,6 @@ async function idbSet(key, value) {
     });
   } catch(e) { console.warn('[idbSet] failed:', e); }
 }
-
 async function idbGet(key) {
   try {
     const db = await _openIDB();
@@ -1013,11 +1010,11 @@ function calcPTotal() {
 }
 
 function savePurchase(id) {
-  const fId = parseInt(document.getElementById('pF').value);
+  const fId = document.getElementById('pF').value;
   const wt = parseFloat(document.getElementById('pW').value);
   const rate = parseFloat(document.getElementById('pR').value);
   const dateVal = document.getElementById('pD').value;
-  if (!fId || isNaN(fId)) return toast('Please select a farmer', true);
+  if (!fId) return toast('Please select a farmer', true);
   if (!dateVal) return toast('Date is required', true);
   if (!wt || wt <= 0) return toast('Weight must be greater than 0', true);
   if (!rate || rate <= 0) return toast('Rate must be greater than 0', true);
@@ -1133,7 +1130,7 @@ function calcSTotal() {
 }
 
 function saveSale(id) {
-  const tId = parseInt(document.getElementById('sT').value);
+  const tId = document.getElementById('sT').value;
   const wt = parseFloat(document.getElementById('sW').value);
   const rate = parseFloat(document.getElementById('sR').value);
   const dateVal = document.getElementById('sD').value;
@@ -1228,7 +1225,7 @@ function refreshPayParties(selectedId) {
 }
 
 function savePayment(id) {
-  const pId = parseInt(document.getElementById('pyParty').value);
+  const pId = document.getElementById('pyParty').value;
   const amt = parseFloat(document.getElementById('pyAmt').value);
   const pyDate = document.getElementById('pyDate').value;
   if (!pId || isNaN(pId)) return toast('Please select a party', true);
