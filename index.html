@@ -648,27 +648,16 @@ function confirmDialog(msg, onOk, okLabel='Delete', okColor='var(--loss)') {
 const SCHEMA_VERSION = 5;
 
 function migrateData(d) {
-  // ── STEP 1: Convert ALL ids and foreign keys to strings ──────
-  // Old records used integer IDs (1,2,3). New records use UUIDs.
-  // Strict equality (===) fails between 1 and "1", causing farmers
-  // to show as "—" in purchases. Normalise everything to strings.
-  (d.farmers||[]).forEach(f => { f.id = String(f.id); });
-  (d.traders||[]).forEach(t => { t.id = String(t.id); });
-  (d.purchases||[]).forEach(p => {
-    p.id = String(p.id);
-    p.farmerId = String(p.farmerId);
-  });
-  (d.sales||[]).forEach(s => {
-    s.id = String(s.id);
-    s.traderId = String(s.traderId);
-  });
-  (d.payments||[]).forEach(p => {
-    p.id = String(p.id);
-    p.partyId = String(p.partyId);
-  });
+  // ── Normalize all IDs to strings (old data used integers, new uses UUIDs) ──
+  // Without this, find(x => x.id === p.farmerId) fails: 1 !== "1"
+  (d.farmers||[]).forEach(f  => { f.id = String(f.id); });
+  (d.traders||[]).forEach(t  => { t.id = String(t.id); });
+  (d.purchases||[]).forEach(p => { p.id = String(p.id); p.farmerId = String(p.farmerId); });
+  (d.sales||[]).forEach(s    => { s.id = String(s.id); s.traderId = String(s.traderId); });
+  (d.payments||[]).forEach(p => { p.id = String(p.id); p.partyId  = String(p.partyId); });
   (d.expenses||[]).forEach(e => { e.id = String(e.id); });
 
-  // ── STEP 2: Ensure every record has fields introduced in v5+ ──
+  // ── Ensure every record has the fields introduced in v5+ ──
   (d.purchases||[]).forEach(p => {
     if (p.bags === undefined) p.bags = 0;
     if (p.notes === undefined) p.notes = '';
@@ -1154,7 +1143,7 @@ function saveSale(id) {
   const wt = parseFloat(document.getElementById('sW').value);
   const rate = parseFloat(document.getElementById('sR').value);
   const dateVal = document.getElementById('sD').value;
-  if (!tId || isNaN(tId)) return toast('Please select a trader', true);
+  if (!tId) return toast('Please select a trader', true);
   if (!dateVal) return toast('Date is required', true);
   if (!wt || wt <= 0) return toast('Weight must be greater than 0', true);
   if (!rate || rate <= 0) return toast('Rate must be greater than 0', true);
@@ -1248,7 +1237,7 @@ function savePayment(id) {
   const pId = document.getElementById('pyParty').value;
   const amt = parseFloat(document.getElementById('pyAmt').value);
   const pyDate = document.getElementById('pyDate').value;
-  if (!pId || isNaN(pId)) return toast('Please select a party', true);
+  if (!pId) return toast('Please select a party', true);
   if (!pyDate) return toast('Date is required', true);
   if (!amt || amt<=0) return toast('Enter a valid amount', true);
   data.payments = ensureArrays(data).payments;
